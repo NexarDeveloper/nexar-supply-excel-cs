@@ -1,0 +1,79 @@
+<DnaLibrary Name="Nexar Supply Query AddIn" RuntimeVersion="v4.0">
+  <ExternalLibrary Path=".\NexarSupplyXll.dll" LoadFromBytes="true" Pack="true" />
+  <Reference Path=".\Newtonsoft.Json.dll" Pack="true" />
+  <Reference Path=".\NexarSupplyApi.dll" Pack="true" />
+  <Reference Path=".\RestSharp.dll" Pack="true" />
+  <Reference Path=".\log4net.dll" Pack="true" />
+  <!-- Some images that can be used in the Ribbon ui -->
+  <Image Name="NexarRefresh" Path=".\Resources\NexarRefresh_128x128.png" Pack="true" />
+  <Image Name="NexarHyperlink" Path=".\Resources\NexarHyperlink_128x128.png" Pack="true" />
+  <Image Name="NexarIcon" Path=".\Resources\NexarIconSquare_128x128.png" Pack="true" />
+  <!-- Below are three CustomUI elements used for different Excel versions.
+       Need not have all three - ExcelDna whatever is most appropriate.  -->
+  <CustomUI>
+    <!-- Inside here is the exact RibbonX xml passed to Excel -->
+    <!-- This will only be loaded for Excel 2010 because of the namespace -->
+    <customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" loadImage="LoadImage">
+      <ribbon>
+        <tabs>
+          <tab id="CustomTab" label="Nexar Supply">
+            <group id="NexarSupplyGroup1" label="Queries">
+              <button id="Button1" label="Refresh All Data" image="NexarRefresh" size="large" onAction="RefreshAllQueries" />
+            </group>
+            <group id="NexarSupplyGroup2" label="Formatting">
+              <button id="Button3" label="Format Hyperlinks" image="NexarHyperlink" size="large" onAction="HyperlinkUrlQueries" />
+			  <button id="Button4" label="Visit Nexar.com" image="NexarIcon" size="large" onAction="VisitNexarQueries" />
+            </group>
+          </tab>
+        </tabs>
+      </ribbon>
+    </customUI>
+  </CustomUI>
+  <CustomUI>
+    <!-- Inside here is the RibbonX xml passed to Excel -->
+    <!-- This can also be loaded by Excel 2007 because of the namespace -->
+    <customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui" loadImage="LoadImage">
+      <ribbon>
+        <tabs>
+          <tab id="CustomTab" label="Nexar Supply">
+            <group id="NexarSupplyGroup1" label="Queries">
+              <button id="Button1" label="Refresh All Data" image="NexarRefresh" size="large" onAction="RefreshAllQueries" />
+            </group>
+            <group id="NexarSupplyGroup2" label="Formatting">
+              <button id="Button3" label="Format Hyperlinks" image="NexarHyperlink" size="large" onAction="HyperlinkUrlQueries" />
+			  <button id="Button4" label="Visit Nexar.com" image="NexarIcon" size="large" onAction="VisitNexarQueries" />
+            </group>
+          </tab>
+        </tabs>
+      </ribbon>
+    </customUI>
+  </CustomUI>
+  <CustomUI>
+    <!-- CommandBars Fallback for Excel version pre-2007, interpreted by ExcelDna (I just made up the namespace for future versioning) -->
+    <commandBars xmlns="http://schemas.excel-dna.net/office/2003/01/commandbars">
+      <commandBar name="Nexar Supply Menu Bar">
+        <!-- Here we add a top-level menu to the main Excel Worksheet menu -->
+        <popup caption="Nexar Supply" height="19">
+          <button caption="Refresh All Queries" onAction="RefreshAllQueries" image="NexarRefresh" beginGroup="true">
+          </button>
+          <button caption="Format Hyperlinks" onAction="HyperlinkUrlQueries" image="NexarHyperlink">
+          </button>
+		  <button caption="Visit Nexar.com" onAction="VisitNexarQueries" image="NexarIcon">
+		  </button>
+        </popup>
+      </commandBar>
+    </commandBars>
+  </CustomUI>
+	<Reference Path="ExcelDna.Documentation.dll" Pack="true" />
+	<Reference Path="ExcelDna.IntelliSense.dll" Pack="true" />
+	<Reference Path="IdentityModel.dll" Pack="true" />
+	<Reference Path="Microsoft.Bcl.AsyncInterfaces.dll" Pack="true" />
+	<Reference Path="System.Buffers.dll" Pack="true" />
+	<Reference Path="System.Memory.dll" Pack="true" />
+	<Reference Path="System.Numerics.Vectors.dll" Pack="true" />
+	<Reference Path="System.Runtime.CompilerServices.Unsafe.dll" Pack="true" />
+	<Reference Path="System.Text.Encodings.Web.dll" Pack="true" />
+	<Reference Path="System.Text.Json.dll" Pack="true" />
+	<Reference Path="System.Threading.Tasks.Extensions.dll" Pack="true" />
+	<Reference Path="System.ValueTuple.dll" Pack="true" />
+</DnaLibrary>
