@@ -4,8 +4,8 @@ The Nexar Supply Excel Add-in enables you to access pricing and availability dat
 
 ## Installation
 1. Download the Nexar Supply Add-in binary for your system.
-* [Nexar Supply Excel Add-in 64-bit](NexarSupplyXll/bin/Release/NexarSupplyXll-AddIn64-packed.xll)
-* [Nexar Supply Excel Add-in 32-bit](NexarSupplyXll/bin/Release/NexarSupplyXll-AddIn-packed.xll)
+* [Nexar Supply Excel Add-in 64-bit](Nexar.Supply.Xll/bin/Release/NexarSupply-AddIn64-packed.xll)
+* [Nexar Supply Excel Add-in 32-bit](Nexar.Supply.Xll/bin/Release/NexarSupply-AddIn-packed.xll)
 
 2. In Excel, choose 'File -> Options -> Add-ins', then press 'Go...' to manage the 'Excel Add-ins'.
 ![](docs/add-ins.png?raw=true)
