@@ -1,9 +1,9 @@
 #Ignore thumbnails created by Windows
 Thumbs.db
 
-#Include the release binaries ".xll" files
-NexarSupplyXll/bin/Release/**
-!NexarSupplyXll/bin/Release/*packed.xll
+#Include the packed release binaries ".xll" files
+Nexar.Supply.Xll/bin/Release/**
+!Nexar.Supply.Xll/bin/Release/*packed.xll
 
 #Otherwise ignore files built by Visual Studio
 *.obj
@@ -36,4 +36,3 @@ packages/
 
 #Ignore the log file
 Nexar.Supply.Xll/bin/Release/mylogfile.txt
-

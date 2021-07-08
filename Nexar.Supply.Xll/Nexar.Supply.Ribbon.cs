@@ -38,11 +38,12 @@ namespace NexarSupplyXll
 
                     foreach (Range cell in cellsToCheck.Cells)
                     {
-                        if (cell.Formula.Contains("=NEXAR_SUPPLY") && cell.Formula.Contains("URL"))
+                        string formula = (string)cell.Formula;
+                        if (formula.Contains("=NEXAR_SUPPLY") && formula.Contains("URL"))
                         {
                             if (cell.Value.ToString().Contains("http"))
                             {
-                                ws.Hyperlinks.Add(cell, cell.Value, Type.Missing, "Click for more information", Type.Missing);
+                                ws.Hyperlinks.Add(cell, (string)cell.Value, Type.Missing, "Click for more information", Type.Missing);
                             }
                             else if (cell.Hyperlinks.Count > 0)
                             {

@@ -69,13 +69,15 @@ For results that come in a URL format (e.g., for `=NEXAR_SUPPLY_DETAIL_URL` or `
   - Ensure the Nexar.Supply.Xll project is set as the "Startup Project" (bold) 
   - Set the Build Configuration to be "Release".
   - Build the solution to generate the new NexarSupply-AddIn64-packed.xll and NexarSupply-AddIn-packed.xll files.
+    - Top Tip: If the build fails the first time, right-click on the Solution -> Restore NuGet Packages (one time only).
   - These can be found in the ".\Nexar.Supply.Xll\bin\Release" folder.
     
 ### Debugging
   Debugging is easy! 
   - Change the Build Configuration setting to "Debug".
   - Choose "Start Debugging" or hit "F5" to build the solution and run the Add-in in debug mode.
+    - Top Tip: If the build fails the first time, right-click on the Solution -> Restore NuGet Packages (one time only).
   - Visual Studio should already be set up to launch Excel and install the Add-in.  
   - You will need to allow the Add-in access for each debug session.
   - You can put a breakpoint in the functions, e.g. NEXAR_SUPPLY_VERSION() in NexarSupplyAddIn.cs.
-  
+  - Alternatively, manually install the .xll file from ".\Nexar.Supply.Xll\bin\Debug" and attach to the Excel process.
