@@ -54,18 +54,20 @@ namespace Nexar.Supply.Api
         private const string NEXAR_BASE_URL = "https://api.nexar.com";
         private const string NEXAR_GRAPHQL = "/graphql";
         private const string NEXAR_VERSION = "0.2.0";
-        
+
         #endregion
 
-        #region NexarUtils
+#region NexarUtils
 
+#if _
         private static string GetSearchMpnQuery(string mpn)
         {
             return $@"query {{supSearchMpn(q: \""{mpn}\"") {{ results {{ part {{ category {{ parentId id name path }} mpn manufacturer {{ name }} shortDescription descriptions {{ text creditString }} specs {{ attribute {{ name shortname }} displayValue }} }} }} }} }}";
         }
+#endif
         private static string GetMultiMatchQuery()
         {
-            return "query($queries: [SupPartMatchQuery!]!) {supMultiMatch (queries: $queries) { reference error hits parts { v3uid mpn manufacturer { id name homepageUrl } octopartUrl sellers { offers { id sku factoryLeadDays factoryPackQuantity inventoryLevel onOrderQuantity orderMultiple multipackQuantity packaging moq clickUrl updated prices { currency quantity price } } company { id name homepageUrl } isAuthorized } } } }";
+            return "query($queries: [SupPartMatchQuery!]!) {supMultiMatch (queries: $queries) { reference error hits parts { v3uid mpn manufacturer { id name homepageUrl } bestDatasheet { url } octopartUrl sellers { offers { id sku factoryLeadDays factoryPackQuantity inventoryLevel onOrderQuantity orderMultiple multipackQuantity packaging moq clickUrl updated prices { currency quantity price } } company { id name homepageUrl } isAuthorized } } } }";
         }
 
         /// <summary>
@@ -76,9 +78,9 @@ namespace Nexar.Supply.Api
             return NEXAR_VERSION;
         }
 
-        #endregion
+#endregion
 
-        #region Methods-Search
+#region Methods-Search
         /// <summary>
         /// Execute a part/match endpoint search
         /// </summary>

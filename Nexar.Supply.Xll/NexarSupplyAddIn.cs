@@ -125,7 +125,6 @@ namespace NexarSupplyXll
 #endif
         }
 
-#if _
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Gets the Nexar Supply Datasheet Url", HelpTopic = "NexarSupplyAddIn.chm!1002")]
         public static object NEXAR_SUPPLY_DATASHEET_URL(
             [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
@@ -155,7 +154,7 @@ namespace NexarSupplyXll
                     }
 
                     // ---- BEGIN Function Specific Information ----
-                    return part.Manufacturer.GetDatasheetUrl();
+                    return part.GetDatasheetUrl();
                     // ---- END Function Specific Information ----
                 }
                 catch (Exception ex)
@@ -176,8 +175,6 @@ namespace NexarSupplyXll
 
             return asyncResult;
         }
-#endif
-
 
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Gets the distributor price from Nexar Supply", HelpTopic = "NexarSupplyAddIn.chm!1003")]
         public static object NEXAR_SUPPLY_DISTRIBUTOR_PRICE(

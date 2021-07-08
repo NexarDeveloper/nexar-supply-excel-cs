@@ -7,9 +7,6 @@ namespace ExtensionMethods
 {
     public static class Extensions
     {
-#if _
-    TODO: Unveil datasheets...
-
         /// <summary>
         /// Gets the url of the datasheet; returns first option if available
         /// </summary>
@@ -17,19 +14,11 @@ namespace ExtensionMethods
         /// <returns>The url for the 'best' datasheet</returns>
         public static string GetDatasheetUrl(this Part part)
         {
-            if ((part != null) && (part.datasheets != null))
-            {
-                var datasheet = part.datasheets.FirstOrDefault(i => !string.IsNullOrEmpty(i.url));
-                if (datasheet != null)
-                {
-                    // Success!
-                    return datasheet.url;
-                }
-            }
-
+            if (part != null && part.BestDatasheet != null)
+                return part.BestDatasheet.Url;
+            
             return "ERROR: Datasheet url not found. Please try expanding your search";
         }
-#endif
 
         /// <summary>
         /// Find the best price given the price break

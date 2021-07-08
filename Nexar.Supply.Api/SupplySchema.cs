@@ -53,6 +53,9 @@ namespace Nexar.Supply.SupplySchema
         [JsonProperty("manufacturer")]
         public Manufacturer Manufacturer { get; set; }
 
+        [JsonProperty("bestDatasheet")]
+        public SupDocument BestDatasheet { get; set; }
+
         [JsonProperty("octopartUrl")]
         public Uri OctopartUrl { get; set; }
 
@@ -71,6 +74,12 @@ namespace Nexar.Supply.SupplySchema
 
         [JsonProperty("homepageUrl")]
         public string HomepageUrl { get; set; }
+    }
+
+    public partial class SupDocument
+    {
+        [JsonProperty("url")]
+        public string Url { get; set; }
     }
 
     public partial class Seller
