@@ -327,8 +327,8 @@ namespace NexarSupplyXll
                 // ---- BEGIN Function Specific Information ----
                 long stock = offers.Max(offer => offer.InventoryLevel);
                 if (stock > 0)
-                    return "In stock";
-                
+                    return stock.ToString();
+
                 return "Not in stock";
                 // ---- END Function Specific Information ----
             }
@@ -351,7 +351,7 @@ namespace NexarSupplyXll
                     // ---- BEGIN Function Specific Information ----
                     long stock = offers.Max(offer => offer.InventoryLevel);
                     if (stock > 0)
-                        return "In stock";
+                        return stock.ToString();
 
                     return "Not in stock";
                     // ---- END Function Specific Information ----
