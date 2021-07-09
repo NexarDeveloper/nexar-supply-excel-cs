@@ -9,6 +9,7 @@ Nexar.Supply.Xll/bin/Release/**
 *.obj
 *.exe
 *.pdb
+*.dll
 *.user
 *.aps
 *.pch
@@ -36,3 +37,4 @@ packages/
 
 #Ignore the log file
 Nexar.Supply.Xll/bin/Release/mylogfile.txt
+
