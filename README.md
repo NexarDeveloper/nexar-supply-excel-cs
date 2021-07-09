@@ -58,6 +58,10 @@ From here on, the world is your oyster:
 
 For results that come in a URL format (e.g., for `=NEXAR_SUPPLY_DETAIL_URL` or `=NEXAR_SUPPLY_DISTRIBUTOR_URL`, click the "Format Hyperlinks" button to activate the links.
 
+## Sample Spreadsheet
+A sample spreadsheet, including examples of functions and a  small BOM, is provided. 
+* [Sample Excel](samples/NexarSupplytAddInExample.xlsm)
+
 
 # Building the Excel Add-in (Windows):
 
