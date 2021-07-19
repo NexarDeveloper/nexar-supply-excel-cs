@@ -8,7 +8,7 @@ If you haven't done so already, you will need to register at [nexar.com](https:/
 2. Create your Organization.
 3. Create an Application ensuring you have the "Supply" scope switch enabled.
 4. Go to your Dashboard and then Manage Applications and choose Show Details to see the Client ID and Secret credentials.
-5. The Client Secret is confidential and should only be used to authenticate your Application and make requests its behalf.
+5. The Client Secret is confidential and should only be used to authenticate your Application and make requests on its behalf.
 
 ## Installation
 1. Download the Nexar Supply Add-in binary for your system.
