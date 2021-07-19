@@ -2,6 +2,14 @@
 
 The Nexar Supply Excel Add-in enables you to access pricing and availability data from right within Microsoft Excel. You can pull part information for your BOM all at once without leaving your spreadsheet.
 
+## Register at Nexar.com
+If you haven't done so already, you will need to register at [nexar.com](https://nexar.com).
+1. Sign up for a new account for free and complete the simple registration process.
+2. Create your Organization.
+3. Create an Application ensuring you have the "Supply" scope switch enabled.
+4. Go to your Dashboard and then Manage Applications and choose Show Details to see the Client ID and Secret credentials.
+5. The Client Secret is confidential and should only be used to authenticate your Application and make requests its behalf.
+
 ## Installation
 1. Download the Nexar Supply Add-in binary for your system.
 * [Nexar Supply Excel Add-in 64-bit](Nexar.Supply.Xll/bin/Release/NexarSupply-AddIn64-packed.xll)
