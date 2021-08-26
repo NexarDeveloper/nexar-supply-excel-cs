@@ -2,6 +2,8 @@
 
 The Nexar Supply Excel Add-in enables you to access pricing and availability data from right within Microsoft Excel. You can pull part information for your BOM all at once without leaving your spreadsheet.
 
+This Add-in is supported on the Windows platform only and the versions supported are Excel for Microsoft 365 and Excel 2016.  Specifically, the versions tested were Excel for Microsoft 365 MSO (16.0.14228.20216) 64-bit and Microsoft Excel 2016 MSO (16.0.14228.20216) 32-bit.
+
 ## Register at Nexar.com
 If you haven't done so already, you will need to register at [nexar.com](https://nexar.com).
 1. Sign up for a new account for free and complete the simple registration process.
