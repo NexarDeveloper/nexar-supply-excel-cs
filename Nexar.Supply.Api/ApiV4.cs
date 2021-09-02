@@ -192,7 +192,7 @@ namespace Nexar.Supply.Api
                     try
                     {
                         // TODO: The Octopart Add-in had something about a Mouser special case...
-                        if (ignoreMoq || (int)price.Quantity >= qty)
+                        if ((int)price.Quantity <= qty)
                             if (price.PricePrice < priceMin)
                                 priceMin = price.PricePrice;
                     }
