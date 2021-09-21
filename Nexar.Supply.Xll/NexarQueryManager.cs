@@ -45,6 +45,8 @@ namespace NexarSupplyXll
         /// Fatal error string
         /// </summary>
         public const string FATAL_ERROR = "An error occurred. Please consider logging a GitHub issue against this problem or contact Nexar directly.";
+        
+        public const string PROCESSING = "!!! Processing !!!";
         #endregion
 
         #region Variables
@@ -61,7 +63,7 @@ namespace NexarSupplyXll
         /// <summary>
         /// The query cache
         /// </summary>
-        private readonly ConcurrentBag<CacheItem> _queryList = new ConcurrentBag<CacheItem>();
+        private readonly ConcurrentStack<CacheItem> _queryList = new ConcurrentStack<CacheItem>();
         #endregion
 
         #region Classes
@@ -276,6 +278,19 @@ namespace NexarSupplyXll
                 }
             }
         }
+
+        /// <summary>
+        /// Empties the query cache for cached data; parts will need to be requeried again.
+        /// </summary>
+        /// <remarks>
+        public void EmptyQueryCache()
+        {
+            lock (_queryList)
+            {
+                _queryList.Clear();
+            }
+        }
+        
         #endregion
 
         #region Methods-Support
@@ -297,7 +312,7 @@ namespace NexarSupplyXll
                 {
                     Log.Debug(string.Format("Adding {0}:{1}:{2} to the queue", mpn_or_sku, start, Nexar.Supply.Api.ApiV4.RECORD_LIMIT_PER_QUERY));
                     CacheItem item = new CacheItem(mpn_or_sku, start, Nexar.Supply.Api.ApiV4.RECORD_LIMIT_PER_QUERY);
-                    _queryList.Add(item);
+                    _queryList.Push(item);
 
                     if (string.IsNullOrEmpty(NexarToken))
                     {
