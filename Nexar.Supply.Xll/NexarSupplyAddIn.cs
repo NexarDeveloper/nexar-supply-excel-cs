@@ -112,7 +112,7 @@ namespace NexarSupplyXll
             if (asyncResult.Equals(ExcelError.ExcelErrorNA))
             {
                 // Still processing...
-                return "!!! Processing !!!";
+                return NexarQueryManager.PROCESSING;
             }
             else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (part == null))
             {
@@ -166,7 +166,7 @@ namespace NexarSupplyXll
 
             if (asyncResult.Equals(ExcelError.ExcelErrorNA))
             {
-                return "!!! Processing !!!";
+                return NexarQueryManager.PROCESSING;
             }
             else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (part == null))
             {
@@ -231,7 +231,7 @@ namespace NexarSupplyXll
 
             if (asyncResult.Equals(ExcelError.ExcelErrorNA))
             {
-                return "!!! Processing !!!";
+                return NexarQueryManager.PROCESSING;
             }
             else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (offers == null))
             {
@@ -304,7 +304,7 @@ namespace NexarSupplyXll
 
             if (asyncResult.Equals(ExcelError.ExcelErrorNA))
             {
-                return "!!! Processing !!!";
+                return NexarQueryManager.PROCESSING;
             }
             else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (offers == null))
             {
@@ -322,7 +322,7 @@ namespace NexarSupplyXll
             [ExcelArgument(Description = "Distributors for lookup (optional)", Name = "Distributor(s)")] Object[] distributors = null)
         {
             List<Offer> offers = GetOffers(mpn_or_sku, manuf, GetDistributors(distributors));
-            if ((offers != null) && (offers.Count > 0))
+            if (offers != null && offers.Count > 0)
             {
                 // ---- BEGIN Function Specific Information ----
                 long stock = offers.Max(offer => offer.InventoryLevel);
@@ -365,7 +365,7 @@ namespace NexarSupplyXll
 
             if (asyncResult.Equals(ExcelError.ExcelErrorNA))
             {
-                return "!!! Processing !!!";
+                return NexarQueryManager.PROCESSING;
             }
             else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (offers == null))
             {
@@ -430,7 +430,7 @@ namespace NexarSupplyXll
 
             if (asyncResult.Equals(ExcelError.ExcelErrorNA))
             {
-                return "!!! Processing !!!";
+                return NexarQueryManager.PROCESSING;
             }
             else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (offers == null))
             {
@@ -482,7 +482,7 @@ namespace NexarSupplyXll
 
             if (asyncResult.Equals(ExcelError.ExcelErrorNA))
             {
-                return "!!! Processing !!!";
+                return NexarQueryManager.PROCESSING;
             }
             else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (offers == null))
             {
@@ -534,7 +534,7 @@ namespace NexarSupplyXll
 
             if (asyncResult.Equals(ExcelError.ExcelErrorNA))
             {
-                return "!!! Processing !!!";
+                return NexarQueryManager.PROCESSING;
             }
             else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (offers == null))
             {
@@ -586,7 +586,7 @@ namespace NexarSupplyXll
 
             if (asyncResult.Equals(ExcelError.ExcelErrorNA))
             {
-                return "!!! Processing !!!";
+                return NexarQueryManager.PROCESSING;
             }
             else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (offer == null))
             {
@@ -638,7 +638,7 @@ namespace NexarSupplyXll
 
             if (asyncResult.Equals(ExcelError.ExcelErrorNA))
             {
-                return "!!! Processing !!!";
+                return NexarQueryManager.PROCESSING;
             }
             else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (offer == null))
             {
@@ -690,7 +690,7 @@ namespace NexarSupplyXll
 
             if (asyncResult.Equals(ExcelError.ExcelErrorNA))
             {
-                return "!!! Processing !!!";
+                return NexarQueryManager.PROCESSING;
             }
             else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (offer == null))
             {

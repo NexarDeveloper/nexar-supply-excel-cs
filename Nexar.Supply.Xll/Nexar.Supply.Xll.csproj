@@ -90,13 +90,15 @@
     <Content Include="Resources\NexarHyperlink_128x128.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\NexarHyperlink_600x600.png" />
-    <Content Include="Resources\NexarIconSquare_128x128.png" />
-    <Content Include="Resources\NexarIconSquare_600x600.png" />
+    <Content Include="Resources\NexarIconSquare_128x128.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\NexarRefreshAll_128x128.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\NexarRefresh_128x128.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\NexarRefresh_600x600.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Excel-DNA">

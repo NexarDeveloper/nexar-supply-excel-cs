@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using ExcelDna.Integration;
 using ExcelDna.Integration.CustomUI;
 using Microsoft.Office.Interop.Excel;
+using NexarSupplyXll;
 
 namespace NexarSupplyXll
 {
@@ -39,7 +40,7 @@ namespace NexarSupplyXll
                     foreach (Range cell in cellsToCheck.Cells)
                     {
                         string formula = (string)cell.Formula;
-                        if (formula.Contains("=NEXAR_SUPPLY") && formula.Contains("URL"))
+                        if (formula.Contains("NEXAR_SUPPLY_") && formula.Contains("URL"))
                         {
                             if (cell.Value.ToString().Contains("http"))
                             {
@@ -75,23 +76,25 @@ namespace NexarSupplyXll
             }
         }
 
-        /// <summary>
-        /// Forces a refresh of all 'NEXAR_SUPPLY' queries
+        // <summary>
+        // Performance a refresh of the 'NEXAR_SUPPLY' queries
         /// </summary>
         /// <param name="control">Ribbon control button</param>
-        public void RefreshAllQueries(IRibbonControl control)
+        private void doRefresh(IRibbonControl control, bool forceAll)
         {
             try
             {
                 dynamic xlApp = ExcelDnaUtil.Application;
                 dynamic cellsToCheck = xlApp.ActiveSheet.Cells.SpecialCells(XlCellType.xlCellTypeFormulas);
 
-                // This neat trick will 're-formulate' the cell, changing nothing, but causing a refresh!
                 if (cellsToCheck != null)
                 {
+                    if (forceAll)
+                    {
+                        // This neat trick will 're-formulate' the cell, changing nothing, but causing a refresh!
                     cellsToCheck.Replace(
-                        @"=NEXAR_SUPPLY_",
-                        @"=NEXAR_SUPPLY_",
+                        @"NEXAR_SUPPLY_",
+                        @"NEXAR_SUPPLY_",
                         XlLookAt.xlPart,
                         XlSearchOrder.xlByRows,
                         true,
@@ -99,11 +102,48 @@ namespace NexarSupplyXll
                         Type.Missing,
                         Type.Missing);
                 }
+                    else
+                    {
+                        // Check each cell's value for error - if so reset the value and This neat trick will 're-formulate' the cell, changing nothing, but causing a refresh!
+                        foreach (Range cell in cellsToCheck.Cells)
+                        {
+                            string formula = (string)cell.Formula;
+                            if (formula.Contains("NEXAR_SUPPLY_") && cell.Value.ToString().ToLower().StartsWith("error"))
+                            {
+                                cell.Value = NexarQueryManager.PROCESSING;
+                                if (cell.Hyperlinks.Count > 0)
+                                    cell.Hyperlinks.Delete();
+
+                                cell.Formula = formula;
+                            }
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
                 Log.Error(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Refreshes all 'NEXAR_SUPPLY' queries in which there is an error value reported
+        /// </summary>
+        /// <param name="control">Ribbon control button</param>
+        public void RetryErrors(IRibbonControl control)
+        {
+            doRefresh(control, false);
+        }
+
+        /// <summary>
+        /// Forces a refresh of all 'NEXAR_SUPPLY' queries
+        /// </summary>
+        /// <param name="control">Ribbon control button</param>
+        public void ForceRefreshAll(IRibbonControl control)
+        {
+            NexarSupplyAddIn.QueryManager.EmptyQueryCache();
+            doRefresh(control, true);
+        }
+
     }
 }
