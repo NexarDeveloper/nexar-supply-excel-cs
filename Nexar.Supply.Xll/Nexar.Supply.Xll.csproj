@@ -102,25 +102,25 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Excel-DNA">
-      <Version>1.5.0-rc1</Version>
+      <Version>1.5.1</Version>
     </PackageReference>
     <PackageReference Include="Excel-DNA.Lib">
-      <Version>1.5.0-rc1</Version>
+      <Version>1.5.1</Version>
     </PackageReference>
     <PackageReference Include="ExcelDna.AddIn">
-      <Version>1.5.0-rc1</Version>
+      <Version>1.5.1</Version>
     </PackageReference>
     <PackageReference Include="ExcelDna.Integration">
-      <Version>1.5.0-rc1</Version>
+      <Version>1.5.1</Version>
     </PackageReference>
     <PackageReference Include="ExcelDna.IntelliSense">
-      <Version>1.5.0-rc1</Version>
+      <Version>1.5.1</Version>
     </PackageReference>
     <PackageReference Include="ExcelDna.Registration">
-      <Version>1.5.0-rc1</Version>
+      <Version>1.5.1</Version>
     </PackageReference>
     <PackageReference Include="ExcelDnaDoc">
-      <Version>0.2.3</Version>
+      <Version>1.5.1</Version>
     </PackageReference>
     <PackageReference Include="IdentityModel">
       <Version>4.1.0</Version>

@@ -19,9 +19,8 @@
   <PropertyGroup>
     <!--
       Enable/Disable setting the debug options when building the project
-    -->
+	-->
     <RunExcelDnaSetDebuggerOptions Condition="'$(RunExcelDnaSetDebuggerOptions)' == ''">true</RunExcelDnaSetDebuggerOptions>
-
     <!--
       Override the path of EXCEL.EXE used for debugging the project, if you need
       By default, it will use the latest version of Excel it can find on the machine

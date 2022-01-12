@@ -53,7 +53,7 @@ namespace Nexar.Supply.Api
 
         private const string NEXAR_BASE_URL = "https://api.nexar.com";
         private const string NEXAR_GRAPHQL = "/graphql";
-        private const string NEXAR_VERSION = "0.3.0";
+        private const string NEXAR_VERSION = "0.3.1";
 
         #endregion
 
@@ -137,7 +137,10 @@ namespace Nexar.Supply.Api
 
                 var req2 = new RestRequest(NEXAR_GRAPHQL, Method.POST) { RequestFormat = DataFormat.Json }
                     .AddParameter("application/json", jsonBody, ParameterType.RequestBody)
-                    .AddHeader("token", nexarToken);
+                    .AddHeader("Content-Type", "application/json")
+                    .AddHeader("X-Nexar-Client", "NexarSupply-AddIn")
+                    .AddHeader("X-Nexar-Client-Version", NEXAR_VERSION)
+                    .AddHeader("Authorization", "Bearer " + nexarToken);
 
                 req2.Timeout = httpTimeout;
 
