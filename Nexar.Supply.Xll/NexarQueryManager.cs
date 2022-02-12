@@ -1,4 +1,5 @@
 ﻿using log4net;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,16 @@ namespace NexarSupplyXll
         /// Gets or sets the Nexar API token.
         /// </summary>
         public string NexarToken { get; set; }
+
+        /// <summary>
+        /// The UTC time when the access token expires.
+        /// </summary>
+        public DateTime NexarTokenExpires { get; set; }
+        
+        /// <summary>
+        /// Whether a renew login has been triggered.
+        /// </summary>
+        public bool NexarTokenRenewing { get; set; }
 
         /// <summary>
         /// Cached client ID/Secret so we don't get a new token on every update.

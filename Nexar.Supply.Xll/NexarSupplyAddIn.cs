@@ -707,19 +707,28 @@ namespace NexarSupplyXll
         )
         {
             bool changed = QueryManager.NexarClientId != clientId || QueryManager.NexarClientSecret != clientSecret;
+            bool renew = QueryManager.NexarTokenRenewing;
+            if (renew)
+                QueryManager.NexarTokenRenewing = false;
 
-            if (changed)
+            if (changed || renew)
             {
                 QueryManager.NexarClientId = clientId;
                 QueryManager.NexarClientSecret = clientSecret;
 
-                var t = ExcelAsyncUtil.Run("GetTokenAsync", new object[] { clientId, clientSecret }, delegate
+                var t = ExcelAsyncUtil.Run("NEXAR_SUPPLY_LOGIN", new object[] { clientId, clientSecret }, delegate
                 {
                     QueryManager.NexarToken = GetNexarTokenAsync().Result;
                     if (string.IsNullOrEmpty(QueryManager.NexarToken))
+                    {
+                        QueryManager.NexarTokenExpires = DateTime.MaxValue;
                         return "Unable to login to Nexar application, check Client Id and Secret";
+                    }
                     else
+                    {
+                        QueryManager.NexarTokenExpires = DateTime.UtcNow + TimeSpan.FromDays(1); // TODO: Better to extract exp from JWT
                         return "The Nexar Supply Add-in is ready!";
+                    }
                 });
             }
 
@@ -727,6 +736,8 @@ namespace NexarSupplyXll
                 return "Please provide your Nexar application Client Id and Secret";
             else if (string.IsNullOrEmpty(QueryManager.NexarToken))
                 return "Unable to login to Nexar application, check Client Id and Secret";
+            else if (QueryManager.NexarTokenExpires < DateTime.UtcNow)
+                return "!!! The access token has expired, please renew login !!!";
             else
                 return "The Nexar Supply Add-in is ready!";
         }
@@ -735,6 +746,12 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_DEV_TOKEN()
         {
             return QueryManager.NexarToken;
+        }
+
+        [ExcelFunction(Category = "Nexar Supply Queries", Description = "Displays the expiry time in UTC of the internal Nexar token", IsHidden = true, IsVolatile = true)]
+        public static object NEXAR_SUPPLY_DEV_TOKEN_EXPIRES()
+        {
+            return QueryManager.NexarTokenExpires.ToString();
         }
 
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Displays the Nexar Supply API version", IsVolatile = true)]

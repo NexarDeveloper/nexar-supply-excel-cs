@@ -53,7 +53,7 @@ namespace Nexar.Supply.Api
 
         private const string NEXAR_BASE_URL = "https://api.nexar.com";
         private const string NEXAR_GRAPHQL = "/graphql";
-        private const string NEXAR_VERSION = "0.3.1";
+        private const string NEXAR_VERSION = "0.4.0";
 
         #endregion
 
@@ -157,7 +157,15 @@ namespace Nexar.Supply.Api
                 var supplyResult = SupplyResult.FromJson(contentJson);
 
                 ret.Data = supplyResult.Data;
-                ret.ErrorMessage = res2.ErrorMessage;
+
+                if (!string.IsNullOrEmpty(res2.ErrorMessage))
+                {
+                    ret.ErrorMessage = res2.ErrorMessage;
+                }
+                else if (supplyResult.Errors?.Count > 0)
+                {
+                    ret.ErrorMessage = supplyResult.Errors[0].Message;
+                }
 
                 return ret;
             }

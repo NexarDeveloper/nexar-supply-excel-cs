@@ -19,6 +19,15 @@ namespace Nexar.Supply.SupplySchema
     {
         [JsonProperty("data")]
         public Data Data { get; set; }
+
+        [JsonProperty("errors")]
+        public List<Error> Errors { get; set; }
+    }
+
+    public partial class Error
+    {
+        [JsonProperty("message")]
+        public string Message { get; set; }
     }
 
     public partial class Data

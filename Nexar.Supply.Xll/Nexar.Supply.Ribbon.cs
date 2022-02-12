@@ -76,11 +76,40 @@ namespace NexarSupplyXll
             }
         }
 
+        /// <summary>
+        /// Login again to generate a new access token
+        /// </summary>
+        /// <param name="control"></param>
+        public void RenewLogin(IRibbonControl control)
+        {
+            try
+            {
+                NexarQueryManager queryManager = NexarSupplyAddIn.QueryManager;
+                queryManager.NexarTokenRenewing = true;
+
+                dynamic xlApp = ExcelDnaUtil.Application;
+                dynamic cellsToCheck = xlApp.ActiveSheet.Cells.SpecialCells(XlCellType.xlCellTypeFormulas);
+                foreach (Range cell in cellsToCheck.Cells)
+                {
+                    string formula = (string)cell.Formula;
+                    if (formula.Contains("NEXAR_SUPPLY_LOGIN"))
+                    {
+                        cell.Value = NexarQueryManager.PROCESSING;
+                        cell.Formula = formula;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+            }
+        }
+
         // <summary>
         // Performance a refresh of the 'NEXAR_SUPPLY' queries
         /// </summary>
         /// <param name="control">Ribbon control button</param>
-        private void doRefresh(IRibbonControl control, bool forceAll)
+        private void DoRefresh(IRibbonControl control, bool forceAll)
         {
             try
             {
@@ -132,7 +161,7 @@ namespace NexarSupplyXll
         /// <param name="control">Ribbon control button</param>
         public void RetryErrors(IRibbonControl control)
         {
-            doRefresh(control, false);
+            DoRefresh(control, false);
         }
 
         /// <summary>
@@ -142,7 +171,7 @@ namespace NexarSupplyXll
         public void ForceRefreshAll(IRibbonControl control)
         {
             NexarSupplyAddIn.QueryManager.EmptyQueryCache();
-            doRefresh(control, true);
+            DoRefresh(control, true);
         }
 
     }
