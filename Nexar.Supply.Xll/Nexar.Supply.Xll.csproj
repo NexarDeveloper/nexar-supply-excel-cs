@@ -87,6 +87,23 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+	<Content Include="Resources\hyperlink.png">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\login.png">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+	<Content Include="Resources\nexar.png">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+	<Content Include="Resources\refresh.png">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+	<Content Include="Resources\retry.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>	
+  <ItemGroup>
     <PackageReference Include="Excel-DNA">
       <Version>1.5.1</Version>
     </PackageReference>
@@ -141,13 +158,6 @@
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\hyperlink.png" />
-    <Content Include="Resources\login.png" />
-    <Content Include="Resources\nexar.png" />
-    <Content Include="Resources\refresh.png" />
-    <Content Include="Resources\retry.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
