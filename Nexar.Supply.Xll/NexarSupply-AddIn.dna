@@ -5,10 +5,11 @@
   <Reference Path=".\RestSharp.dll" Pack="true" />
   <Reference Path=".\log4net.dll" Pack="true" />
   <!-- Some images that can be used in the Ribbon ui -->
-  <Image Name="NexarRefresh" Path=".\Resources\NexarRefresh_128x128.png" Pack="true" />
-  <Image Name="NexarRefreshAll" Path=".\Resources\NexarRefreshAll_128x128.png" Pack="true" />
-  <Image Name="NexarHyperlink" Path=".\Resources\NexarHyperlink_128x128.png" Pack="true" />
-  <Image Name="NexarIcon" Path=".\Resources\NexarIconSquare_128x128.png" Pack="true" />
+  <Image Name="NexarRefresh" Path=".\Resources\retry.png" Pack="true" />
+  <Image Name="NexarRefreshAll" Path=".\Resources\refresh.png" Pack="true" />
+  <Image Name="NexarHyperlink" Path=".\Resources\hyperlink.png" Pack="true" />
+  <Image Name="NexarLogin" Path=".\Resources\login.png" Pack="true" />
+  <Image Name="NexarIcon" Path=".\Resources\nexar.png" Pack="true" />
   <!-- Below are three CustomUI elements used for different Excel versions.
        Need not have all three - ExcelDna whatever is most appropriate.  -->
   <CustomUI>
@@ -19,14 +20,15 @@
         <tabs>
           <tab id="CustomTab" label="Nexar Supply">
             <group id="NexarSupplyGroup1" label="Queries">
-              <button id="Button1" label="Retry Errors" image="NexarRefresh" size="large" onAction="RetryErrors" />
-			  <button id="Button2" label="Force Refresh All" image="NexarRefreshAll" size="large" onAction="ForceRefreshAll" />
+              <button id="Button1" label="Rerun Failures" image="NexarRefresh" size="large" onAction="RetryErrors" />
+			  <button id="Button2" label="Force Rerun All" image="NexarRefreshAll" size="large" onAction="ForceRefreshAll" />
             </group>
             <group id="NexarSupplyGroup2" label="Formatting">
-              <button id="Button3" label="Format Hyperlinks" image="NexarHyperlink" size="large" onAction="HyperlinkUrlQueries" />
+              <button id="Button3" label="Update Hyperlinks" image="NexarHyperlink" size="large" onAction="HyperlinkUrlQueries" />
 			</group>
-			<group id="NexarSupplyGroup3" label="Nexar">
-			  <button id="Button4" label="Visit Nexar.com" image="NexarIcon" size="large" onAction="VisitNexarQueries" />
+			<group id="NexarSupplyGroup3" label="Connect to Nexar">
+			  <button id="Button4" label="Refresh Login" image="NexarLogin" size="large" onAction="RenewLogin" />
+			  <button id="Button5" label="Launch nexar.com" image="NexarIcon" size="large" onAction="VisitNexarQueries" />
             </group>
           </tab>
         </tabs>
@@ -41,14 +43,15 @@
         <tabs>
           <tab id="CustomTab" label="Nexar Supply">
             <group id="NexarSupplyGroup1" label="Queries">
-			  <button id="Button1" label="Retry Errors" image="NexarRefresh" size="large" onAction="RetryErrors" />
-		      <button id="Button2" label="Force Refresh All" image="NexarRefreshAll" size="large" onAction="ForceRefreshAll" />
+			  <button id="Button1" label="Rerun Failures" image="NexarRefresh" size="large" onAction="RetryErrors" />
+		      <button id="Button2" label="Force Rerun All" image="NexarRefreshAll" size="large" onAction="ForceRefreshAll" />
             </group>
             <group id="NexarSupplyGroup2" label="Formatting">
-              <button id="Button3" label="Format Hyperlinks" image="NexarHyperlink" size="large" onAction="HyperlinkUrlQueries" />
+              <button id="Button3" label="Update Hyperlinks" image="NexarHyperlink" size="large" onAction="HyperlinkUrlQueries" />
 			</group>
 			<group id="NexarSupplyGroup3" label="Nexar">
-			  <button id="Button4" label="Visit Nexar.com" image="NexarIcon" size="large" onAction="VisitNexarQueries" />
+			  <button id="Button4" label="Refresh Login" image="NexarLogin" size="large" onAction="RenewLogin" />
+			  <button id="Button5" label="Launch nexar.com" image="NexarIcon" size="large" onAction="VisitNexarQueries" />
             </group>
           </tab>
         </tabs>
@@ -61,13 +64,15 @@
       <commandBar name="Nexar Supply Menu Bar">
         <!-- Here we add a top-level menu to the main Excel Worksheet menu -->
         <popup caption="Nexar Supply" height="19">
-          <button caption="Retry Errors" onAction="RetryErrors" image="NexarRefresh" beginGroup="true">
+          <button caption="Rerun Failures" onAction="RetryErrors" image="NexarRefresh" beginGroup="true">
 		  </button>
-		  <button caption="Force Refresh All" onAction="ForceRefreshAll" image="NexarRefreshAll">
+		  <button caption="Force Rerun All" onAction="ForceRefreshAll" image="NexarRefreshAll">
           </button>
-          <button caption="Format Hyperlinks" onAction="HyperlinkUrlQueries" image="NexarHyperlink">
-          </button>
-		  <button caption="Visit Nexar.com" onAction="VisitNexarQueries" image="NexarIcon">
+          <button caption="Update Hyperlinks" onAction="HyperlinkUrlQueries" image="NexarHyperlink">
+		  </button>
+		  <button caption="Refresh Login" onAction="RenewLogin" image="NexarLogin">
+		  </button>
+		  <button caption="Launch nexar.com" onAction="VisitNexarQueries" image="NexarIcon">
 		  </button>
         </popup>
       </commandBar>

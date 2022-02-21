@@ -14,6 +14,18 @@ namespace NexarSupplyXll
 {
     public class NexarSupplyAddIn : IExcelAddIn
     {
+        #region Types
+        /// <summary>
+        /// Whether to consider authorized sellers when filtering search results
+        /// </summary>
+        public enum AuthorizedSeller
+        {
+            Any,
+            Yes,
+            No
+        };
+        #endregion
+
         #region Variables
         /// <summary>
         /// A collection of Options that configure the Nexar Supply Add-In
@@ -182,9 +194,11 @@ namespace NexarSupplyXll
             [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "",
             [ExcelArgument(Description = "Distributors for lookup (optional)", Name = "Distributor(s)")] Object[] distributors = null,
             [ExcelArgument(Description = "Quantity for lookup (optional, default = 1)", Name = "Quantity")] int qty = 1,
-            [ExcelArgument(Description = "Currency for lookup (optional, default = USD). Standard currency codes apply (http://en.wikipedia.org/wiki/ISO_4217)", Name = "Currency")] string currency = "USD")
+            [ExcelArgument(Description = "Currency for lookup (optional, default = USD). Standard currency codes apply (http://en.wikipedia.org/wiki/ISO_4217)", Name = "Currency")] string currency = "USD",
+            [ExcelArgument(Description = "Only authorized sellers (optional, default = Any)", Name = "Authorized")] string authorized = "Any")
         {
-            List<Offer> offers = GetOffers(mpn_or_sku, manuf, GetDistributors(distributors));
+            AuthorizedSeller auth = (AuthorizedSeller)Parse(authorized);
+            List<Offer> offers = GetOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
             if ((offers != null) && (offers.Count > 0))
             {
                 // ---- BEGIN Function Specific Information ----
@@ -203,7 +217,7 @@ namespace NexarSupplyXll
 #endif
             try
             {
-                offers = SearchAndWaitOffers(mpn_or_sku, manuf, GetDistributors(distributors));
+                offers = SearchAndWaitOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
                 if ((offers == null) || (offers.Count == 0))
                 {
                     string err = QueryManager.GetLastError(mpn_or_sku);
@@ -247,9 +261,11 @@ namespace NexarSupplyXll
             [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
             [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "",
             [ExcelArgument(Description = "Quantity for lookup (optional, default = 1)", Name = "Quantity")] int qty = 1,
-            [ExcelArgument(Description = "Currency for lookup (optional, default = USD). Standard currency codes apply (http://en.wikipedia.org/wiki/ISO_4217)", Name = "Currency")] string currency = "USD")
+            [ExcelArgument(Description = "Currency for lookup (optional, default = USD). Standard currency codes apply (http://en.wikipedia.org/wiki/ISO_4217)", Name = "Currency")] string currency = "USD",
+            [ExcelArgument(Description = "Only authorized sellers (optional, default = Any)", Name = "Authorized")] string authorized = "Any")
         {
-            List<Offer> offers = GetOffers(mpn_or_sku, manuf);
+            AuthorizedSeller auth = (AuthorizedSeller) Parse(authorized);
+            List<Offer> offers = GetOffers(mpn_or_sku, manuf, auth);
             if ((offers != null) && (offers.Count > 0))
             {
                 // ---- BEGIN Function Specific Information ----
@@ -272,7 +288,7 @@ namespace NexarSupplyXll
 #endif
             try
             {
-                offers = SearchAndWaitOffers(mpn_or_sku, manuf);
+                offers = SearchAndWaitOffers(mpn_or_sku, manuf, auth);
                 if ((offers == null) || (offers.Count == 0))
                 {
                     string err = QueryManager.GetLastError(mpn_or_sku);
@@ -319,9 +335,11 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_DISTRIBUTOR_STOCK(
             [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
             [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "",
-            [ExcelArgument(Description = "Distributors for lookup (optional)", Name = "Distributor(s)")] Object[] distributors = null)
+            [ExcelArgument(Description = "Distributors for lookup (optional)", Name = "Distributor(s)")] Object[] distributors = null,
+            [ExcelArgument(Description = "Only authorized sellers (optional, default = Any)", Name = "Authorized")] string authorized = "Any")
         {
-            List<Offer> offers = GetOffers(mpn_or_sku, manuf, GetDistributors(distributors));
+            AuthorizedSeller auth = (AuthorizedSeller)Parse(authorized);
+            List<Offer> offers = GetOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
             if (offers != null && offers.Count > 0)
             {
                 // ---- BEGIN Function Specific Information ----
@@ -338,7 +356,7 @@ namespace NexarSupplyXll
             {
                 try
                 {
-                    offers = SearchAndWaitOffers(mpn_or_sku, manuf, GetDistributors(distributors));
+                    offers = SearchAndWaitOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
                     if ((offers == null) || (offers.Count == 0))
                     {
                         string err = QueryManager.GetLastError(mpn_or_sku);
@@ -379,9 +397,11 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_DISTRIBUTOR_MOQ(
             [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
             [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "",
-            [ExcelArgument(Description = "Distributors for lookup (optional)", Name = "Distributor(s)")] Object[] distributors = null)
+            [ExcelArgument(Description = "Distributors for lookup (optional)", Name = "Distributor(s)")] Object[] distributors = null,
+            [ExcelArgument(Description = "Only authorized sellers (optional, default = Any)", Name = "Authorized")] string authorized = "Any")
         {
-            List<Offer> offers = GetOffers(mpn_or_sku, manuf, GetDistributors(distributors));
+            AuthorizedSeller auth = (AuthorizedSeller)Parse(authorized);
+            List<Offer> offers = GetOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
             if ((offers != null) && (offers.Count > 0))
             {
                 // ---- BEGIN Function Specific Information ----
@@ -398,7 +418,7 @@ namespace NexarSupplyXll
             {
                 try
                 {
-                    offers = SearchAndWaitOffers(mpn_or_sku, manuf, GetDistributors(distributors));
+                    offers = SearchAndWaitOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
                     if ((offers == null) || (offers.Count == 0))
                     {
                         string err = QueryManager.GetLastError(mpn_or_sku);
@@ -444,9 +464,11 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_DISTRIBUTOR_ORDER_MULTIPLE(
             [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
             [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "",
-            [ExcelArgument(Description = "Distributors for lookup (optional)", Name = "Distributor(s)")] Object[] distributors = null)
+            [ExcelArgument(Description = "Distributors for lookup (optional)", Name = "Distributor(s)")] Object[] distributors = null,
+            [ExcelArgument(Description = "Only authorized sellers (optional, default = Any)", Name = "Authorized")] string authorized = "Any")
         {
-            List<Offer> offers = GetOffers(mpn_or_sku, manuf, GetDistributors(distributors));
+            AuthorizedSeller auth = (AuthorizedSeller)Parse(authorized);
+            List<Offer> offers = GetOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
             if (offers != null && offers.Count > 0)
             {
                 // ---- BEGIN Function Specific Information ----
@@ -459,7 +481,7 @@ namespace NexarSupplyXll
             {
                 try
                 {
-                    offers = SearchAndWaitOffers(mpn_or_sku, manuf, GetDistributors(distributors));
+                    offers = SearchAndWaitOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
                     if ((offers == null) || (offers.Count == 0))
                     {
                         string err = QueryManager.GetLastError(mpn_or_sku);
@@ -496,9 +518,11 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_DISTRIBUTOR_LEAD_TIME(
             [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
             [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "",
-            [ExcelArgument(Description = "Distributors for lookup (optional)", Name = "Distributor(s)")] Object[] distributors = null)
+            [ExcelArgument(Description = "Distributors for lookup (optional)", Name = "Distributor(s)")] Object[] distributors = null,
+            [ExcelArgument(Description = "Only authorized sellers (optional, default = Any)", Name = "Authorized")] string authorized = "Any")
         {
-            List<Offer> offers = GetOffers(mpn_or_sku, manuf, GetDistributors(distributors));
+            AuthorizedSeller auth = (AuthorizedSeller)Parse(authorized);
+            List<Offer> offers = GetOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
             if ((offers != null) && (offers.Count > 0))
             {
                 // ---- BEGIN Function Specific Information ----
@@ -511,7 +535,7 @@ namespace NexarSupplyXll
             {
                 try
                 {
-                    offers = SearchAndWaitOffers(mpn_or_sku, manuf, GetDistributors(distributors));
+                    offers = SearchAndWaitOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
                     if ((offers == null) || (offers.Count == 0))
                     {
                         string err = QueryManager.GetLastError(mpn_or_sku);
@@ -548,9 +572,11 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_DISTRIBUTOR_PACKAGING(
             [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
             [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "",
-            [ExcelArgument(Description = "Distributor for lookup (optional)", Name = "Distributor")] string distributor = "")
+            [ExcelArgument(Description = "Distributor for lookup (optional)", Name = "Distributor")] string distributor = "",
+            [ExcelArgument(Description = "Only authorized sellers (optional, default = Any)", Name = "Authorized")] string authorized = "Any")
         {
-            Offer offer = GetOffer(mpn_or_sku, manuf, distributor);
+            AuthorizedSeller auth = (AuthorizedSeller)Parse(authorized);
+            Offer offer = GetOffer(mpn_or_sku, manuf, auth, distributor);
             if (offer != null)
             {
                 // ---- BEGIN Function Specific Information ----
@@ -563,7 +589,7 @@ namespace NexarSupplyXll
             {
                 try
                 {
-                    offer = SearchAndWaitOffer(mpn_or_sku, manuf, distributor);
+                    offer = SearchAndWaitOffer(mpn_or_sku, manuf, auth, distributor);
                     if (offer == null)
                     {
                         string err = QueryManager.GetLastError(mpn_or_sku);
@@ -600,9 +626,11 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_DISTRIBUTOR_URL(
             [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
             [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "",
-            [ExcelArgument(Description = "Distributor for lookup (optional)", Name = "Distributor")] string distributor = "")
+            [ExcelArgument(Description = "Distributor for lookup (optional)", Name = "Distributor")] string distributor = "",
+            [ExcelArgument(Description = "Only authorized sellers (optional, default = Any)", Name = "Authorized")] string authorized = "Any")
         {
-            Offer offer = GetOffer(mpn_or_sku, manuf, distributor);
+            AuthorizedSeller auth = (AuthorizedSeller)Parse(authorized);
+            Offer offer = GetOffer(mpn_or_sku, manuf, auth, distributor);
             if (offer != null)
             {
                 // ---- BEGIN Function Specific Information ----
@@ -615,7 +643,7 @@ namespace NexarSupplyXll
             {
                 try
                 {
-                    offer = SearchAndWaitOffer(mpn_or_sku, manuf, distributor);
+                    offer = SearchAndWaitOffer(mpn_or_sku, manuf, auth, distributor);
                     if (offer == null)
                     {
                         string err = QueryManager.GetLastError(mpn_or_sku);
@@ -652,9 +680,11 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_DISTRIBUTOR_SKU(
             [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
             [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "",
-            [ExcelArgument(Description = "Distributor for lookup (optional)", Name = "Distributor")] string distributor = "")
+            [ExcelArgument(Description = "Distributor for lookup (optional)", Name = "Distributor")] string distributor = "",
+            [ExcelArgument(Description = "Only authorized sellers (optional, default = Any)", Name = "Authorized")] string authorized = "Any")
         {
-            Offer offer = GetOffer(mpn_or_sku, manuf, distributor);
+            AuthorizedSeller auth = (AuthorizedSeller)Parse(authorized);
+            Offer offer = GetOffer(mpn_or_sku, manuf, auth, distributor);
             if (offer != null)
             {
                 // ---- BEGIN Function Specific Information ----
@@ -667,7 +697,7 @@ namespace NexarSupplyXll
             {
                 try
                 {
-                    offer = SearchAndWaitOffer(mpn_or_sku, manuf, distributor);
+                    offer = SearchAndWaitOffer(mpn_or_sku, manuf, auth, distributor);
                     if (offer == null)
                     {
                         string err = QueryManager.GetLastError(mpn_or_sku);
@@ -707,19 +737,28 @@ namespace NexarSupplyXll
         )
         {
             bool changed = QueryManager.NexarClientId != clientId || QueryManager.NexarClientSecret != clientSecret;
+            bool renew = QueryManager.NexarTokenRenewing;
+            if (renew)
+                QueryManager.NexarTokenRenewing = false;
 
-            if (changed)
+            if (changed || renew)
             {
                 QueryManager.NexarClientId = clientId;
                 QueryManager.NexarClientSecret = clientSecret;
 
-                var t = ExcelAsyncUtil.Run("GetTokenAsync", new object[] { clientId, clientSecret }, delegate
+                var t = ExcelAsyncUtil.Run("NEXAR_SUPPLY_LOGIN", new object[] { clientId, clientSecret }, delegate
                 {
                     QueryManager.NexarToken = GetNexarTokenAsync().Result;
                     if (string.IsNullOrEmpty(QueryManager.NexarToken))
+                    {
+                        QueryManager.NexarTokenExpires = DateTime.MaxValue;
                         return "Unable to login to Nexar application, check Client Id and Secret";
+                    }
                     else
+                    {
+                        QueryManager.NexarTokenExpires = DateTime.UtcNow + TimeSpan.FromDays(1); // TODO: Better to extract exp from JWT
                         return "The Nexar Supply Add-in is ready!";
+                    }
                 });
             }
 
@@ -727,6 +766,8 @@ namespace NexarSupplyXll
                 return "Please provide your Nexar application Client Id and Secret";
             else if (string.IsNullOrEmpty(QueryManager.NexarToken))
                 return "Unable to login to Nexar application, check Client Id and Secret";
+            else if (QueryManager.NexarTokenExpires < DateTime.UtcNow)
+                return "The access token has expired, please refresh login!";
             else
                 return "The Nexar Supply Add-in is ready!";
         }
@@ -735,6 +776,12 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_DEV_TOKEN()
         {
             return QueryManager.NexarToken;
+        }
+
+        [ExcelFunction(Category = "Nexar Supply Queries", Description = "Displays the expiry time in UTC of the internal Nexar token", IsHidden = true, IsVolatile = true)]
+        public static object NEXAR_SUPPLY_DEV_TOKEN_EXPIRES()
+        {
+            return QueryManager.NexarTokenExpires.ToString();
         }
 
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Displays the Nexar Supply API version", IsVolatile = true)]
@@ -765,6 +812,24 @@ namespace NexarSupplyXll
             }
         }
 
+        public static AuthorizedSeller Parse(string authorizedSeller)
+        {
+            if (!string.IsNullOrEmpty(authorizedSeller))
+            {
+                switch (char.ToLower(authorizedSeller[0]))
+                {
+                    case 'y':
+                        return AuthorizedSeller.Yes;
+                    case 'n':
+                        return AuthorizedSeller.No;
+                    default:
+                        return AuthorizedSeller.Any;
+                }
+            }
+
+            return AuthorizedSeller.Any;
+        }
+
         private static Part SearchAndWaitPart(string mpnOrSku, string manuf)
         {
             // Check for errors. If one exists, force a refresh
@@ -786,7 +851,7 @@ namespace NexarSupplyXll
             return GetManuf(mpnOrSku, manuf);
         }
 
-        private static Offer SearchAndWaitOffer(string mpn_or_sku, string manuf, string distributor = "")
+        private static Offer SearchAndWaitOffer(string mpn_or_sku, string manuf, AuthorizedSeller auth, string distributor = "")
         {
             // Check for errors. If one exists, force a refresh
             if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)))
@@ -808,7 +873,7 @@ namespace NexarSupplyXll
                 else
                 {
                     // Search for specified distributor
-                    var offers = GetAllOffers(parts, distributor);
+                    var offers = GetAllOffers(parts, auth, distributor);
                     if (offers.Count == 0)
                     {
                         if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)))
@@ -822,10 +887,10 @@ namespace NexarSupplyXll
                 }
             }
 
-            return GetOffer(mpn_or_sku, manuf, distributor);
+            return GetOffer(mpn_or_sku, manuf, auth, distributor);
         }
 
-        private static List<Offer> SearchAndWaitOffers(string mpn_or_sku, string manuf, string distributor = "")
+        private static List<Offer> SearchAndWaitOffers(string mpn_or_sku, string manuf, AuthorizedSeller auth, string distributor = "")
         {
             // Check for errors. If one exists, force a refresh
             if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)))
@@ -847,7 +912,7 @@ namespace NexarSupplyXll
                 else
                 {
                     // Search for specified distributor
-                    var offers = GetAllOffers(parts, distributor);
+                    var offers = GetAllOffers(parts, auth, distributor);
                     if (offers.Count == 0)
                     {
                         if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)))
@@ -861,10 +926,10 @@ namespace NexarSupplyXll
                 }
             }
 
-            return GetOffers(mpn_or_sku, manuf, distributor);
+            return GetOffers(mpn_or_sku, manuf, auth, distributor);
         }
 
-        private static List<Offer> SearchAndWaitOffers(string mpn_or_sku, string manuf, List<string> distributors)
+        private static List<Offer> SearchAndWaitOffers(string mpn_or_sku, string manuf, AuthorizedSeller auth, List<string> distributors)
         {
             // Check for errors. If one exists, force a refresh
             if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)))
@@ -886,7 +951,7 @@ namespace NexarSupplyXll
                 else
                 {
                     // Search for specified distributor
-                    var offers = GetAllOffers(parts, distributors);
+                    var offers = GetAllOffers(parts, auth, distributors);
                     if (offers.Count == 0)
                     {
                         if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)))
@@ -900,7 +965,7 @@ namespace NexarSupplyXll
                 }
             }
 
-            return GetOffers(mpn_or_sku, manuf, distributors);
+            return GetOffers(mpn_or_sku, manuf, auth, distributors);
         }
 
         private static Part GetManuf(string mpnOrSku, string manuf)
@@ -909,49 +974,69 @@ namespace NexarSupplyXll
             return parts.FirstOrDefault(part => string.IsNullOrEmpty(manuf) || part.Manufacturer.Name.Sanitize().Contains(manuf.Sanitize()));
         }
 
-        private static Offer GetOffer(string mpnOrSku, string manuf, string distributor = "")
+        private static Offer GetOffer(string mpnOrSku, string manuf, AuthorizedSeller auth, string distributor = "")
         {
             List<Part> parts = QueryManager.GetParts(mpnOrSku);
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> filteredSellers = sellers.Where(seller => string.IsNullOrEmpty(distributor) || seller.Company.Name.Sanitize().Contains(distributor.Sanitize())).ToList();
+            List<Seller> filteredSellers = FilterSellers(auth, distributor, sellers);
             List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers.FirstOrDefault();
         }
 
-        private static List<Offer> GetOffers(string mpnOrSku, string manuf, string distributor = "")
+        private static List<Offer> GetOffers(string mpnOrSku, string manuf, AuthorizedSeller auth, string distributor = "")
         {
             List<Part> parts = QueryManager.GetParts(mpnOrSku);
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> filteredSellers = sellers.Where(seller => string.IsNullOrEmpty(distributor) || seller.Company.Name.Sanitize().Contains(distributor.Sanitize())).ToList();
+            List<Seller> filteredSellers = FilterSellers(auth, distributor, sellers);
             List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers;
         }
 
-        private static List<Offer> GetOffers(string mpnOrSku, string manuf, List<string> distributors)
+        private static List<Seller> FilterSellers(AuthorizedSeller auth, string distributor, List<Seller> sellers)
+        {
+            List<Seller> filteredSellers = sellers.Where(seller => string.IsNullOrEmpty(distributor) || seller.Company.Name.Sanitize().Contains(distributor.Sanitize())).ToList();
+            List<Seller> allowedSellers = filteredSellers.Where(seller =>
+            {
+                switch (auth)
+                {
+                    case AuthorizedSeller.Yes:
+                        return seller.IsAuthorized;
+                    case AuthorizedSeller.No:
+                        return !seller.IsAuthorized;
+                    default:
+                        return true;
+                }
+            }).ToList();
+            return allowedSellers;
+        }
+
+        private static List<Offer> GetOffers(string mpnOrSku, string manuf, AuthorizedSeller auth, List<string> distributors)
         {
             List<Part> parts = QueryManager.GetParts(mpnOrSku);
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> filteredSellers = sellers.Where(
+            List<Seller> allowedSellers = sellers.Where(
                 seller => distributors == null || distributors.Count == 0 || distributors.Any(d => seller.Company.Name.Sanitize().Contains(d.Sanitize()))
             ).ToList();
+            List<Seller> filteredSellers = FilterSellers(auth, string.Empty, allowedSellers);
             List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers;
         }
 
-        private static List<Offer> GetAllOffers(List<Part> parts, string distributor = "")
+        private static List<Offer> GetAllOffers(List<Part> parts, AuthorizedSeller auth, string distributor = "")
         {
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> filteredSellers = sellers.Where(seller => string.IsNullOrEmpty(distributor) || seller.Company.Name.Sanitize().Contains(distributor.Sanitize())).ToList();
+            List<Seller> filteredSellers = FilterSellers(auth, distributor, sellers);
             List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers;
         }
 
-        private static List<Offer> GetAllOffers(List<Part> parts, List<string> distributors)
+        private static List<Offer> GetAllOffers(List<Part> parts, AuthorizedSeller auth, List<string> distributors)
         {
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> filteredSellers = sellers.Where(
+            List<Seller> allowedSellers = sellers.Where(
                 seller => distributors == null || distributors.Count == 0 || distributors.Any(d => seller.Company.Name.Sanitize().Contains(d.Sanitize()))
             ).ToList();
+            List<Seller> filteredSellers = FilterSellers(auth, string.Empty, allowedSellers);
             List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers;
         }

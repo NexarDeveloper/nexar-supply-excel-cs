@@ -87,19 +87,22 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\NexarHyperlink_128x128.png">
+	<Content Include="Resources\hyperlink.png">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\login.png">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+	<Content Include="Resources\nexar.png">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+	<Content Include="Resources\refresh.png">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+	<Content Include="Resources\retry.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\NexarIconSquare_128x128.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\NexarRefreshAll_128x128.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\NexarRefresh_128x128.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+  </ItemGroup>	
   <ItemGroup>
     <PackageReference Include="Excel-DNA">
       <Version>1.5.1</Version>
