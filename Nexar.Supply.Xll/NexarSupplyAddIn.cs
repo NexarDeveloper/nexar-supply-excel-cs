@@ -974,28 +974,12 @@ namespace NexarSupplyXll
             return parts.FirstOrDefault(part => string.IsNullOrEmpty(manuf) || part.Manufacturer.Name.Sanitize().Contains(manuf.Sanitize()));
         }
 
-        private static bool CheckSeller(Seller seller, AuthorizedSeller auth)
-        {
-            switch (auth)
-            {
-                case AuthorizedSeller.Yes: 
-                    return seller.IsAuthorized;
-                        
-                case AuthorizedSeller.No:
-                    return !seller.IsAuthorized;
-
-                default:
-                    return true;
-            }
-        }
-
         private static Offer GetOffer(string mpnOrSku, string manuf, AuthorizedSeller auth, string distributor = "")
         {
             List<Part> parts = QueryManager.GetParts(mpnOrSku);
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> filteredSellers = sellers.Where(seller => string.IsNullOrEmpty(distributor) || seller.Company.Name.Sanitize().Contains(distributor.Sanitize())).ToList();
-            List<Seller> allowedSellers = filteredSellers.Where(seller => CheckSeller(seller, auth)).ToList();
-            List<Offer> offers = allowedSellers.SelectMany(seller => seller.Offers).ToList();
+            List<Seller> filteredSellers = FilterSellers(auth, distributor, sellers);
+            List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers.FirstOrDefault();
         }
 
@@ -1003,41 +987,57 @@ namespace NexarSupplyXll
         {
             List<Part> parts = QueryManager.GetParts(mpnOrSku);
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> filteredSellers = sellers.Where(seller => string.IsNullOrEmpty(distributor) || seller.Company.Name.Sanitize().Contains(distributor.Sanitize())).ToList();
-            List<Seller> allowedSellers = filteredSellers.Where(seller => CheckSeller(seller, auth)).ToList();            
-            List<Offer> offers = allowedSellers.SelectMany(seller => seller.Offers).ToList();
+            List<Seller> filteredSellers = FilterSellers(auth, distributor, sellers);
+            List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers;
+        }
+
+        private static List<Seller> FilterSellers(AuthorizedSeller auth, string distributor, List<Seller> sellers)
+        {
+            List<Seller> filteredSellers = sellers.Where(seller => string.IsNullOrEmpty(distributor) || seller.Company.Name.Sanitize().Contains(distributor.Sanitize())).ToList();
+            List<Seller> allowedSellers = filteredSellers.Where(seller =>
+            {
+                switch (auth)
+                {
+                    case AuthorizedSeller.Yes:
+                        return seller.IsAuthorized;
+                    case AuthorizedSeller.No:
+                        return !seller.IsAuthorized;
+                    default:
+                        return true;
+                }
+            }).ToList();
+            return allowedSellers;
         }
 
         private static List<Offer> GetOffers(string mpnOrSku, string manuf, AuthorizedSeller auth, List<string> distributors)
         {
             List<Part> parts = QueryManager.GetParts(mpnOrSku);
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> filteredSellers = sellers.Where(
+            List<Seller> allowedSellers = sellers.Where(
                 seller => distributors == null || distributors.Count == 0 || distributors.Any(d => seller.Company.Name.Sanitize().Contains(d.Sanitize()))
             ).ToList();
-            List<Seller> allowedSellers = filteredSellers.Where(seller => CheckSeller(seller, auth)).ToList();
-            List<Offer> offers = allowedSellers.SelectMany(seller => seller.Offers).ToList();
+            List<Seller> filteredSellers = FilterSellers(auth, string.Empty, allowedSellers);
+            List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers;
         }
 
         private static List<Offer> GetAllOffers(List<Part> parts, AuthorizedSeller auth, string distributor = "")
         {
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> filteredSellers = sellers.Where(seller => string.IsNullOrEmpty(distributor) || seller.Company.Name.Sanitize().Contains(distributor.Sanitize())).ToList();
-            List<Seller> allowedSellers = filteredSellers.Where(seller => CheckSeller(seller, auth)).ToList();
-            List<Offer> offers = allowedSellers.SelectMany(seller => seller.Offers).ToList();
+            List<Seller> filteredSellers = FilterSellers(auth, distributor, sellers);
+            List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers;
         }
 
         private static List<Offer> GetAllOffers(List<Part> parts, AuthorizedSeller auth, List<string> distributors)
         {
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> filteredSellers = sellers.Where(
+            List<Seller> allowedSellers = sellers.Where(
                 seller => distributors == null || distributors.Count == 0 || distributors.Any(d => seller.Company.Name.Sanitize().Contains(d.Sanitize()))
             ).ToList();
-            List<Seller> allowedSellers = filteredSellers.Where(seller => CheckSeller(seller, auth)).ToList();
-            List<Offer> offers = allowedSellers.SelectMany(seller => seller.Offers).ToList();
+            List<Seller> filteredSellers = FilterSellers(auth, string.Empty, allowedSellers);
+            List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers;
         }
 
