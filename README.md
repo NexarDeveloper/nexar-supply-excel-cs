@@ -9,7 +9,7 @@ If you haven't done so already, you will need to register at [nexar.com](https:/
 1. Sign up for a new account for free and complete the simple registration process.
 2. Create your Organization.
 3. Create an Application ensuring you have the "Supply" scope switch enabled.
-4. Go to your Dashboard and then Manage Applications and choose Show Details to see the Client ID and Secret credentials.
+4. Go to your Dashboard and then Manage Applications and choose Show Details to see the Client Id and Secret credentials.
 5. The Client Secret is confidential and should only be used to authenticate your Application and make requests on its behalf.
 
 ## Installation
@@ -45,9 +45,9 @@ The first function that you'll need to use to activate the Add-in is:
 
 When you've entered these correctly the result will read: `The Nexar Supply Add-in is ready!`. This login to the Nexar servers will mean your usage of supply queries from within the Add-in can be tracked.
 
-- Top Tip: If you see "Unable to login to Nexar application, check Client Id and Secret", this could be a result of a stale session (sessions time out after a period of time to increase security). In this case, make any change to your Client Id/Secret and then paste the correct keys  back in. This will trigger another login attempt and a fresh session.
+- Top Tip: If you see "The access token has expired" or "Unable to login to Nexar application" errors this could be a result of a stale session (sessions time out after a period of time to increase security). In this case, click "Refreh Login" button to refresh the session. 
 
-For accessing your Nexar Supply Client Id and Secret visit Nexar which you can do easily with the "Visit Nexar.com" button.
+For accessing your Nexar Supply Client Id and Secret visit Nexar which you can do easily with the "Launch nexar.com" button.
 
 From here on, the world is your oyster:
 
