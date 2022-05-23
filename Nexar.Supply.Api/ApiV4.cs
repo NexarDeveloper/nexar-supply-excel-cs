@@ -53,7 +53,7 @@ namespace Nexar.Supply.Api
 
         private const string NEXAR_BASE_URL = "https://api.nexar.com";
         private const string NEXAR_GRAPHQL = "/graphql";
-        private const string NEXAR_VERSION = "0.4.0";
+        private const string NEXAR_VERSION = "0.4.1";
 
         #endregion
 

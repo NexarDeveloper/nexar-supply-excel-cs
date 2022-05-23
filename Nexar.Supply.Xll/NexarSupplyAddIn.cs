@@ -344,10 +344,15 @@ namespace NexarSupplyXll
             {
                 // ---- BEGIN Function Specific Information ----
                 long stock = offers.Max(offer => offer.InventoryLevel);
-                if (stock > 0)
-                    return stock.ToString();
-
-                return "Not in stock";
+                switch (stock)
+                {
+                    case -1: return "Non-stocked";
+                    case -2: return "Yes";
+                    case -3: return "Unknown";
+                    case -4: return "RFQ";
+                    default: 
+                        return stock;
+                }
                 // ---- END Function Specific Information ----
             }
 
@@ -368,10 +373,15 @@ namespace NexarSupplyXll
 
                     // ---- BEGIN Function Specific Information ----
                     long stock = offers.Max(offer => offer.InventoryLevel);
-                    if (stock > 0)
-                        return stock.ToString();
-
-                    return "Not in stock";
+                    switch (stock)
+                    {
+                        case -1: return "Non-stocked";
+                        case -2: return "Yes";
+                        case -3: return "Unknown";
+                        case -4: return "RFQ";
+                        default:
+                            return stock;
+                    }                            
                     // ---- END Function Specific Information ----
                 }
                 catch (Exception ex)
