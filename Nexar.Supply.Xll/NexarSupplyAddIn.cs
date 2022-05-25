@@ -343,16 +343,7 @@ namespace NexarSupplyXll
             if (offers != null && offers.Count > 0)
             {
                 // ---- BEGIN Function Specific Information ----
-                long stock = offers.Max(offer => offer.InventoryLevel);
-                switch (stock)
-                {
-                    case -1: return "Non-stocked";
-                    case -2: return "Yes";
-                    case -3: return "Unknown";
-                    case -4: return "RFQ";
-                    default: 
-                        return stock;
-                }
+                return GetOffersStock(offers);
                 // ---- END Function Specific Information ----
             }
 
@@ -372,16 +363,7 @@ namespace NexarSupplyXll
                     }
 
                     // ---- BEGIN Function Specific Information ----
-                    long stock = offers.Max(offer => offer.InventoryLevel);
-                    switch (stock)
-                    {
-                        case -1: return "Non-stocked";
-                        case -2: return "Yes";
-                        case -3: return "Unknown";
-                        case -4: return "RFQ";
-                        default:
-                            return stock;
-                    }                            
+                    return GetOffersStock(offers);
                     // ---- END Function Specific Information ----
                 }
                 catch (Exception ex)
@@ -1000,6 +982,20 @@ namespace NexarSupplyXll
             List<Seller> filteredSellers = FilterSellers(auth, distributor, sellers);
             List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers;
+        }
+
+        private static object GetOffersStock(List<Offer> offers)
+        {
+            long stock = offers.Max(offer => offer.InventoryLevel);
+            switch (stock)
+            {
+                case -1: return "Non-stocked";
+                case -2: return "Yes";
+                case -3: return "Unknown";
+                case -4: return "RFQ";
+                default:
+                    return stock;
+            }
         }
 
         private static List<Seller> FilterSellers(AuthorizedSeller auth, string distributor, List<Seller> sellers)
