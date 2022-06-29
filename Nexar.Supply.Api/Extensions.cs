@@ -11,12 +11,16 @@ namespace ExtensionMethods
         /// Gets the url of the datasheet; returns first option if available
         /// </summary>
         /// <param name="part">The part as returned by the search</param>
+        /// <param name="expectDatasheets">Datasheets are expected for the querying client</param>
         /// <returns>The url for the 'best' datasheet</returns>
-        public static string GetDatasheetUrl(this Part part)
+        public static string GetDatasheetUrl(this Part part, bool expectDatasheets)
         {
             if (part != null && part.BestDatasheet != null)
                 return part.BestDatasheet.Url;
-            
+
+            if (!expectDatasheets)
+                return "";
+
             return "ERROR: Datasheet url not found. Please try expanding your search";
         }
 

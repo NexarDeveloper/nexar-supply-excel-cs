@@ -146,7 +146,7 @@ namespace NexarSupplyXll
             if (part != null)
             {
                 // ---- BEGIN Function Specific Information ----
-                return part.GetDatasheetUrl();
+                return part.GetDatasheetUrl(QueryManager.IncludeDatasheets);
                 // ---- END Function Specific Information ----
             }
 
@@ -166,7 +166,7 @@ namespace NexarSupplyXll
                     }
 
                     // ---- BEGIN Function Specific Information ----
-                    return part.GetDatasheetUrl();
+                    return part.GetDatasheetUrl(QueryManager.IncludeDatasheets);
                     // ---- END Function Specific Information ----
                 }
                 catch (Exception ex)
@@ -725,10 +725,24 @@ namespace NexarSupplyXll
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Sets the Nexar Application's client Id and Secret to allow Nexar Supply queries", IsVolatile = true)]
         public static object NEXAR_SUPPLY_LOGIN(
             [ExcelArgument(Description = "Client Id", Name = "Client Id")] string clientId,
-            [ExcelArgument(Description = "Client Secret", Name = "Client Secret")] string clientSecret
-        )
+            [ExcelArgument(Description = "Client Secret", Name = "Client Secret")] string clientSecret,
+            [ExcelArgument(Description = "Include Datasheets (optional)", Name = "Include Datasheets")] string datasheets = "",
+            [ExcelArgument(Description = "Include Lead Time (optional)", Name = "Include Lead Time")] string leadTime = "")
         {
-            bool changed = QueryManager.NexarClientId != clientId || QueryManager.NexarClientSecret != clientSecret;
+            bool includeDatasheets = true;
+            if (!string.IsNullOrEmpty(datasheets))
+                bool.TryParse(datasheets, out includeDatasheets);
+            
+            bool includeLeadTime = true;
+            if (!string.IsNullOrEmpty(leadTime))
+                bool.TryParse(leadTime, out includeLeadTime);
+            
+            bool changed =
+                QueryManager.NexarClientId != clientId ||
+                QueryManager.NexarClientSecret != clientSecret ||
+                QueryManager.IncludeDatasheets != includeDatasheets ||
+                QueryManager.IncludeLeadTime != includeLeadTime;
+            
             bool renew = QueryManager.NexarTokenRenewing;
             if (renew)
                 QueryManager.NexarTokenRenewing = false;
@@ -737,6 +751,8 @@ namespace NexarSupplyXll
             {
                 QueryManager.NexarClientId = clientId;
                 QueryManager.NexarClientSecret = clientSecret;
+                QueryManager.IncludeDatasheets = includeDatasheets;
+                QueryManager.IncludeLeadTime = includeLeadTime;
 
                 var t = ExcelAsyncUtil.Run("NEXAR_SUPPLY_LOGIN", new object[] { clientId, clientSecret }, delegate
                 {
@@ -774,6 +790,12 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_DEV_TOKEN_EXPIRES()
         {
             return QueryManager.NexarTokenExpires.ToString();
+        }
+
+        [ExcelFunction(Category = "Nexar Supply Queries", Description = "Displays the internal features requested", IsHidden = true, IsVolatile = true)]
+        public static object NEXAR_SUPPLY_FEATURES()
+        {
+            return "Datasheets: " + (QueryManager.IncludeDatasheets ? "1" : "0") + "; LeadTime: " + (QueryManager.IncludeLeadTime ? "1" : "0");
         }
 
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Displays the Nexar Supply API version", IsVolatile = true)]
