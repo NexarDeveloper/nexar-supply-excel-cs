@@ -53,7 +53,7 @@ namespace Nexar.Supply.Api
 
         private const string NEXAR_BASE_URL = "https://api.nexar.com";
         private const string NEXAR_GRAPHQL = "/graphql";
-        private const string NEXAR_VERSION = "0.4.1";
+        private const string NEXAR_VERSION = "0.5";
 
         #endregion
 
@@ -68,6 +68,17 @@ namespace Nexar.Supply.Api
         private static string GetMultiMatchQuery()
         {
             return "query($queries: [SupPartMatchQuery!]!) {supMultiMatch (queries: $queries) { reference error hits parts { v3uid mpn manufacturer { id name homepageUrl } bestDatasheet { url } octopartUrl sellers { offers { id sku factoryLeadDays factoryPackQuantity inventoryLevel onOrderQuantity orderMultiple multipackQuantity packaging moq clickUrl updated prices { currency quantity price } } company { id name homepageUrl } isAuthorized } } } }";
+        }
+
+        private static string GetResponseErrorMessage(IRestResponse res)
+        {
+            string contentJson = res.Content;
+            var supplyResult = SupplyResult.FromJson(contentJson);
+
+            if (supplyResult?.Errors.Count > 0)
+                return supplyResult.Errors.First().Message;
+            
+            return "Server did not return OK (" + res.ErrorMessage + ")";
         }
 
         /// <summary>
@@ -148,7 +159,7 @@ namespace Nexar.Supply.Api
 
                 if (res2.StatusCode != HttpStatusCode.OK)
                 {
-                    ret.ErrorMessage = "Server did not return OK (" + res2.ErrorMessage + ")";
+                    ret.ErrorMessage = GetResponseErrorMessage(res2);
                     Log.Error(string.Format("{0}", ret.ErrorMessage));
                     return ret;
                 }
