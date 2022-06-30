@@ -188,6 +188,57 @@ namespace NexarSupplyXll
             return asyncResult;
         }
 
+        [ExcelFunction(Category = "Nexar Supply Queries", Description = "Gets the short description of the part from Nexar Supply")]
+        public static object NEXAR_SUPPLY_SHORT_DESCRIPTION(
+            [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
+            [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "")
+        {
+            Part part = GetManuf(mpn_or_sku, manuf);
+            if (part != null)
+            {
+                // ---- BEGIN Function Specific Information ----
+                return part.ShortDescription;
+                // ---- END Function Specific Information ----
+            }
+
+            mpn_or_sku = mpn_or_sku.PadRight(mpn_or_sku.Length + _refreshhack.Length);
+            object asyncResult = ExcelAsyncUtil.Run("NEXAR_SUPPLY_DATASHEET_URL", new object[] { mpn_or_sku, manuf }, delegate
+            {
+                try
+                {
+                    part = SearchAndWaitPart(mpn_or_sku, manuf);
+                    if (part == null)
+                    {
+                        string err = QueryManager.GetLastError(mpn_or_sku);
+                        if (string.IsNullOrEmpty(err))
+                            err = "Query did not provide a result. Please widen your search criteria.";
+
+                        return "ERROR: " + err;
+                    }
+
+                    // ---- BEGIN Function Specific Information ----
+                    return part.ShortDescription;
+                    // ---- END Function Specific Information ----
+                }
+                catch (Exception ex)
+                {
+                    log.Fatal(ex.ToString());
+                    return "ERROR: " + NexarQueryManager.FATAL_ERROR;
+                }
+            });
+
+            if (asyncResult.Equals(ExcelError.ExcelErrorNA))
+            {
+                return NexarQueryManager.PROCESSING;
+            }
+            else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (part == null))
+            {
+                _refreshhack = string.Empty.PadRight(new Random().Next(0, 100));
+            }
+
+            return asyncResult;
+        }
+
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Gets the distributor price from Nexar Supply", HelpTopic = "NexarSupplyAddIn.chm!1003")]
         public static object NEXAR_SUPPLY_DISTRIBUTOR_PRICE(
             [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,

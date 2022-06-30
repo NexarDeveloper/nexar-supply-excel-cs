@@ -68,11 +68,11 @@ namespace Nexar.Supply.Api
         
         private static string GetMultiMatchQuery(bool includeDatasheets, bool includeLeadTime)
         {
-            //return "query($queries: [SupPartMatchQuery!]!) {supMultiMatch (queries: $queries) { reference error hits parts { v3uid mpn manufacturer { id name homepageUrl } bestDatasheet { url } octopartUrl sellers { offers { id sku factoryLeadDays factoryPackQuantity inventoryLevel onOrderQuantity orderMultiple multipackQuantity packaging moq clickUrl updated prices { currency quantity price } } company { id name homepageUrl } isAuthorized } } } }";
             string datasheet = includeDatasheets ? "bestDatasheet { url } " : string.Empty;
             string factoryLeadDays = includeLeadTime ? "factoryLeadDays " : string.Empty;
 
-            return "query($queries: [SupPartMatchQuery!]!) {supMultiMatch (queries: $queries) { reference error hits parts { v3uid mpn manufacturer { id name homepageUrl } " + datasheet + "octopartUrl sellers { offers { id sku " + factoryLeadDays + "factoryPackQuantity inventoryLevel onOrderQuantity orderMultiple multipackQuantity packaging moq clickUrl updated prices { currency quantity price } } company { id name homepageUrl } isAuthorized } } } }";        }
+            return "query($queries: [SupPartMatchQuery!]!) {supMultiMatch (queries: $queries) { reference error hits parts { v3uid mpn shortDescription manufacturer { id name homepageUrl } " + datasheet + "octopartUrl sellers { offers { id sku " + factoryLeadDays + "factoryPackQuantity inventoryLevel onOrderQuantity orderMultiple multipackQuantity packaging moq clickUrl updated prices { currency quantity price } } company { id name homepageUrl } isAuthorized } } } }";
+        }
 
         private static string GetResponseErrorMessage(IRestResponse res)
         {
