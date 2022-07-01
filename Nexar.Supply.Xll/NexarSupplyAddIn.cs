@@ -844,7 +844,7 @@ namespace NexarSupplyXll
         }
 
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Displays the internal features requested", IsHidden = true, IsVolatile = true)]
-        public static object NEXAR_SUPPLY_FEATURES()
+        public static object NEXAR_SUPPLY_DEV_FEATURES()
         {
             return "Datasheets: " + (QueryManager.IncludeDatasheets ? "1" : "0") + "; LeadTime: " + (QueryManager.IncludeLeadTime ? "1" : "0");
         }
