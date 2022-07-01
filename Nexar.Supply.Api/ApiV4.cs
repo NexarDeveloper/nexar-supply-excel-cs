@@ -53,11 +53,11 @@ namespace Nexar.Supply.Api
 
         private const string NEXAR_BASE_URL = "https://api.nexar.com";
         private const string NEXAR_GRAPHQL = "/graphql";
-        private const string NEXAR_VERSION = "0.4.1";
+        private const string NEXAR_VERSION = "0.5";
 
         #endregion
 
-#region NexarUtils
+        #region NexarUtils
 
 #if _
         private static string GetSearchMpnQuery(string mpn)
@@ -65,9 +65,28 @@ namespace Nexar.Supply.Api
             return $@"query {{supSearchMpn(q: \""{mpn}\"") {{ results {{ part {{ category {{ parentId id name path }} mpn manufacturer {{ name }} shortDescription descriptions {{ text creditString }} specs {{ attribute {{ name shortname }} displayValue }} }} }} }} }}";
         }
 #endif
-        private static string GetMultiMatchQuery()
+        
+        private static string GetMultiMatchQuery(bool excludeDatasheets, bool excludeLeadTime)
         {
-            return "query($queries: [SupPartMatchQuery!]!) {supMultiMatch (queries: $queries) { reference error hits parts { v3uid mpn manufacturer { id name homepageUrl } bestDatasheet { url } octopartUrl sellers { offers { id sku factoryLeadDays factoryPackQuantity inventoryLevel onOrderQuantity orderMultiple multipackQuantity packaging moq clickUrl updated prices { currency quantity price } } company { id name homepageUrl } isAuthorized } } } }";
+            string bestDatasheet = excludeDatasheets ? string.Empty : "bestDatasheet { url } ";
+            string factoryLeadDays = excludeLeadTime ? string.Empty : "factoryLeadDays ";
+
+            return "query($queries: [SupPartMatchQuery!]!) {supMultiMatch (queries: $queries) { reference error hits parts { v3uid mpn shortDescription manufacturer { id name homepageUrl } "
+                + bestDatasheet 
+                + "octopartUrl sellers { offers { id sku " 
+                + factoryLeadDays 
+                + "factoryPackQuantity inventoryLevel onOrderQuantity orderMultiple multipackQuantity packaging moq clickUrl updated prices { currency quantity price } } company { id name homepageUrl } isAuthorized } } } }";
+        }
+
+        private static string GetResponseErrorMessage(IRestResponse res)
+        {
+            string contentJson = res.Content;
+            var supplyResult = SupplyResult.FromJson(contentJson);
+
+            if (supplyResult?.Errors.Count > 0)
+                return supplyResult.Errors.First().Message;
+            
+            return "Server returned an error (" + res.ErrorMessage + "). Check all arguments to NEXAR_SUPPLY_LOGIN()";
         }
 
         /// <summary>
@@ -94,10 +113,10 @@ namespace Nexar.Supply.Api
         /// <notes>
         /// Server timeout is defaulted to 5000ms
         /// </notes>
-        public static SearchResponse PartsMatch(List<PartsMatchQuery> pnList, string nexarToken, int httpTimeout = 5000)
+        public static SearchResponse PartsMatch(List<PartsMatchQuery> pnList, string nexarToken, bool excludeDatasheets, bool excludeLeadTime, int httpTimeout = 5000)
         {
             if ((pnList == null) || (pnList.Count == 0))
-                return null;  // Empty input
+                return null;
 
             var query = new List<Dictionary<string, object>>();
             foreach (PartsMatchQuery pn in pnList)
@@ -119,7 +138,6 @@ namespace Nexar.Supply.Api
 
             SearchResponse ret = new SearchResponse();
 
-            // New Nexar way follows...
             if (!string.IsNullOrEmpty(nexarToken))
             {
                 var client2 = new RestClient(NEXAR_BASE_URL);
@@ -131,7 +149,7 @@ namespace Nexar.Supply.Api
                 //  For this parts match query, we're gunning for something like this...
                 //  https://octopart.com/api/v4/rest/parts/match?apikey=YOUR_API_KEY&include[]=datasheets&queries=[%7B%22mpn%22:%22INA225*%22,%22limit%22:4%7D]&pretty_print=true
 
-                string matchQuery = GetMultiMatchQuery();
+                string matchQuery = GetMultiMatchQuery(excludeDatasheets, excludeLeadTime);
                 string variables = "\"queries\": " + queryString;
                 string jsonBody = $@"{{ ""query"": ""{matchQuery}"", ""variables"": {{ {variables} }} }}";
 
@@ -148,7 +166,7 @@ namespace Nexar.Supply.Api
 
                 if (res2.StatusCode != HttpStatusCode.OK)
                 {
-                    ret.ErrorMessage = "Server did not return OK (" + res2.ErrorMessage + ")";
+                    ret.ErrorMessage = GetResponseErrorMessage(res2);
                     Log.Error(string.Format("{0}", ret.ErrorMessage));
                     return ret;
                 }

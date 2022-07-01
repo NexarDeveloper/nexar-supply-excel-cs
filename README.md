@@ -50,10 +50,16 @@ The following functions are available through the Add-in. You can also access th
 
 The first function that you'll need to call in order to use the Add-in is:
 
-`=NEXAR_SUPPLY_LOGIN("`_`YourClientId`_`", "`_`YourClientSecret`_`")`
+`=NEXAR_SUPPLY_LOGIN("`_`ClientId`_`", "`_`ClientSecret`_`")`
 
-_`YourClientId`_ refers to your unique Nexar Supply application Client Id key as provided by Nexar.
-_`YourClientSecret`_ refers to your unique Nexar Supply application Client Secret key as provided by Nexar.
+_`ClientId`_ refers to your unique Nexar Supply application Client Id key as provided by Nexar.
+_`ClientSecret`_ refers to your unique Nexar Supply application Client Secret key as provided by Nexar.
+
+
+- Top Tip: There are two additional, optional arguments to login and if you are a self-serve customer on a subscription which doesn't include the `Datasheets` or `Lead Time` features, you'll need to pass in `TRUE` to one or both argument. If you are an enterprise customer or using the free plan no change is needed.
+- `=NEXAR_SUPPLY_LOGIN("`_`ClientId`_`", "`_`ClientSecret`_`", "`_`ExcludeDatasheets`_`", "`_`ExcludeLeadTime`_`")`
+  - _`ExcludeDatasheets`_ optional, defaults to `FALSE`, should be set to `TRUE` if the client is unauthorized to access datasheet data.
+  - _`ExcludeLeadTime`_ optional, defaults to `FALSE`, should be set to `TRUE` if the client is unauthorized to access lead time data.
 
 Once you've entered these correctly the result will read "_The Nexar Supply Add-in is ready!_". This login to the Nexar servers will mean your usage of supply queries from within the Add-in can be tracked and offset against your monthly quota.
 
@@ -71,6 +77,7 @@ From here on, the world is your oyster:
 =NEXAR_SUPPLY_AVERAGE_PRICE(...)
 =NEXAR_SUPPLY_DATASHEET_URL(...)
 =NEXAR_SUPPLY_DETAIL_URL(...)
+=NEXAR_SUPPLY_SHORT_DESCRIPTION(...)
 =NEXAR_SUPPLY_DISTRIBUTOR_LEAD_TIME(...)
 =NEXAR_SUPPLY_DISTRIBUTOR_MOQ(...)
 =NEXAR_SUPPLY_DISTRIBUTOR_ORDER_MUTIPLE(...)

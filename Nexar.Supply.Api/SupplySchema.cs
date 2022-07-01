@@ -59,6 +59,9 @@ namespace Nexar.Supply.SupplySchema
         [JsonProperty("mpn")]
         public string Mpn { get; set; }
 
+        [JsonProperty("shortDescription")]
+        public string ShortDescription { get; set; }        
+
         [JsonProperty("manufacturer")]
         public Manufacturer Manufacturer { get; set; }
 

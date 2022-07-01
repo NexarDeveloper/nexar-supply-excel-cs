@@ -146,7 +146,7 @@ namespace NexarSupplyXll
             if (part != null)
             {
                 // ---- BEGIN Function Specific Information ----
-                return part.GetDatasheetUrl();
+                return part.GetDatasheetUrl(QueryManager.ExcludeDatasheets);
                 // ---- END Function Specific Information ----
             }
 
@@ -166,7 +166,58 @@ namespace NexarSupplyXll
                     }
 
                     // ---- BEGIN Function Specific Information ----
-                    return part.GetDatasheetUrl();
+                    return part.GetDatasheetUrl(QueryManager.ExcludeDatasheets);
+                    // ---- END Function Specific Information ----
+                }
+                catch (Exception ex)
+                {
+                    log.Fatal(ex.ToString());
+                    return "ERROR: " + NexarQueryManager.FATAL_ERROR;
+                }
+            });
+
+            if (asyncResult.Equals(ExcelError.ExcelErrorNA))
+            {
+                return NexarQueryManager.PROCESSING;
+            }
+            else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (part == null))
+            {
+                _refreshhack = string.Empty.PadRight(new Random().Next(0, 100));
+            }
+
+            return asyncResult;
+        }
+
+        [ExcelFunction(Category = "Nexar Supply Queries", Description = "Gets the short description of the part from Nexar Supply")]
+        public static object NEXAR_SUPPLY_SHORT_DESCRIPTION(
+            [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
+            [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "")
+        {
+            Part part = GetManuf(mpn_or_sku, manuf);
+            if (part != null)
+            {
+                // ---- BEGIN Function Specific Information ----
+                return part.ShortDescription;
+                // ---- END Function Specific Information ----
+            }
+
+            mpn_or_sku = mpn_or_sku.PadRight(mpn_or_sku.Length + _refreshhack.Length);
+            object asyncResult = ExcelAsyncUtil.Run("NEXAR_SUPPLY_DATASHEET_URL", new object[] { mpn_or_sku, manuf }, delegate
+            {
+                try
+                {
+                    part = SearchAndWaitPart(mpn_or_sku, manuf);
+                    if (part == null)
+                    {
+                        string err = QueryManager.GetLastError(mpn_or_sku);
+                        if (string.IsNullOrEmpty(err))
+                            err = "Query did not provide a result. Please widen your search criteria.";
+
+                        return "ERROR: " + err;
+                    }
+
+                    // ---- BEGIN Function Specific Information ----
+                    return part.ShortDescription;
                     // ---- END Function Specific Information ----
                 }
                 catch (Exception ex)
@@ -725,10 +776,24 @@ namespace NexarSupplyXll
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Sets the Nexar Application's client Id and Secret to allow Nexar Supply queries", IsVolatile = true)]
         public static object NEXAR_SUPPLY_LOGIN(
             [ExcelArgument(Description = "Client Id", Name = "Client Id")] string clientId,
-            [ExcelArgument(Description = "Client Secret", Name = "Client Secret")] string clientSecret
-        )
+            [ExcelArgument(Description = "Client Secret", Name = "Client Secret")] string clientSecret,
+            [ExcelArgument(Description = "Exclude Datasheet data (optional)", Name = "Exclude Datasheets")] string datasheets = "",
+            [ExcelArgument(Description = "Exclude Lead Time data (optional)", Name = "Exclude Lead Time")] string leadTime = "")
         {
-            bool changed = QueryManager.NexarClientId != clientId || QueryManager.NexarClientSecret != clientSecret;
+            bool excludeDatasheets = false;
+            if (!string.IsNullOrEmpty(datasheets))
+                bool.TryParse(datasheets, out excludeDatasheets);
+            
+            bool excludeLeadTime = false;
+            if (!string.IsNullOrEmpty(leadTime))
+                bool.TryParse(leadTime, out excludeLeadTime);
+            
+            bool changed =
+                QueryManager.NexarClientId != clientId ||
+                QueryManager.NexarClientSecret != clientSecret ||
+                QueryManager.ExcludeDatasheets != excludeDatasheets ||
+                QueryManager.ExcludeLeadTime != excludeLeadTime;
+            
             bool renew = QueryManager.NexarTokenRenewing;
             if (renew)
                 QueryManager.NexarTokenRenewing = false;
@@ -737,6 +802,8 @@ namespace NexarSupplyXll
             {
                 QueryManager.NexarClientId = clientId;
                 QueryManager.NexarClientSecret = clientSecret;
+                QueryManager.ExcludeDatasheets = excludeDatasheets;
+                QueryManager.ExcludeLeadTime = excludeLeadTime;
 
                 var t = ExcelAsyncUtil.Run("NEXAR_SUPPLY_LOGIN", new object[] { clientId, clientSecret }, delegate
                 {
@@ -774,6 +841,12 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_DEV_TOKEN_EXPIRES()
         {
             return QueryManager.NexarTokenExpires.ToString();
+        }
+
+        [ExcelFunction(Category = "Nexar Supply Queries", Description = "Displays the internal features requested", IsHidden = true, IsVolatile = true)]
+        public static object NEXAR_SUPPLY_DEV_FEATURES()
+        {
+            return "ExcludeDatasheets: " + QueryManager.ExcludeDatasheets + "; ExcludeLeadTime: " + QueryManager.ExcludeLeadTime;
         }
 
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Displays the Nexar Supply API version", IsVolatile = true)]

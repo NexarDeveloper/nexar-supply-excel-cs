@@ -36,6 +36,14 @@ namespace NexarSupplyXll
         public string NexarClientSecret { get; set; }
 
         /// <summary>
+        /// Whether or not to include specific features when querying on behalf of the client.
+        /// A client may not have access if they are a self-serve customer.
+        /// </summary>
+        public bool ExcludeDatasheets { get; set; }
+
+        public bool ExcludeLeadTime { get; set; }
+
+        /// <summary>
         /// Gets or sets the lower level Api timeout value
         /// </summary>
         public int HttpTimeout { get; set; }
@@ -386,7 +394,7 @@ namespace NexarSupplyXll
             }
             
             Log.Debug(string.Format("Performing search of {0} items", tempList.Count));
-            Nexar.Supply.Api.ApiV4.SearchResponse resp = Nexar.Supply.Api.ApiV4.PartsMatch(tempList.Select(i => i.Query).ToList(), NexarToken, HttpTimeout);
+            Nexar.Supply.Api.ApiV4.SearchResponse resp = Nexar.Supply.Api.ApiV4.PartsMatch(tempList.Select(i => i.Query).ToList(), NexarToken, ExcludeDatasheets, ExcludeLeadTime, HttpTimeout);
             
             // If proper data wasn't provided, quit
             if (resp == null)
