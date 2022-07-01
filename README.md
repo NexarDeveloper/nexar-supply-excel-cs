@@ -56,10 +56,10 @@ _`ClientId`_ refers to your unique Nexar Supply application Client Id key as pro
 _`ClientSecret`_ refers to your unique Nexar Supply application Client Secret key as provided by Nexar.
 
 
-- Top Tip: There are two additional, optional arguments to login and if you are a self-serve customer on a subscription which doesn't include the `Datasheets` or `Lead Time` features, you'll need to pass in `FALSE` to one or both argument. If you are an enterprise customer or using the free plan no change is needed.
-- `=NEXAR_SUPPLY_LOGIN("`_`ClientId`_`", "`_`ClientSecret`_`", "`_`IncludeDatasheets`_`", "`_`IncludeLeadTime`_`")`
-  - _`IncludeDatasheets`_ optional, defaults to `TRUE`, should be set to `FALSE` if the client is unauthorized to access datasheet data.
-  - _`IncludeLeadTime`_ optional, defaults to `TRUE`, should be set to `FALSE` if the client is unauthorized to access lead time data.
+- Top Tip: There are two additional, optional arguments to login and if you are a self-serve customer on a subscription which doesn't include the `Datasheets` or `Lead Time` features, you'll need to pass in `TRUE` to one or both argument. If you are an enterprise customer or using the free plan no change is needed.
+- `=NEXAR_SUPPLY_LOGIN("`_`ClientId`_`", "`_`ClientSecret`_`", "`_`ExcludeDatasheets`_`", "`_`ExcludeLeadTime`_`")`
+  - _`ExcludeDatasheets`_ optional, defaults to `FALSE`, should be set to `TRUE` if the client is unauthorized to access datasheet data.
+  - _`ExcludeLeadTime`_ optional, defaults to `FALSE`, should be set to `TRUE` if the client is unauthorized to access lead time data.
 
 Once you've entered these correctly the result will read "_The Nexar Supply Add-in is ready!_". This login to the Nexar servers will mean your usage of supply queries from within the Add-in can be tracked and offset against your monthly quota.
 

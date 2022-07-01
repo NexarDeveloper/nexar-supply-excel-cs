@@ -66,12 +66,16 @@ namespace Nexar.Supply.Api
         }
 #endif
         
-        private static string GetMultiMatchQuery(bool includeDatasheets, bool includeLeadTime)
+        private static string GetMultiMatchQuery(bool excludeDatasheets, bool excludeLeadTime)
         {
-            string datasheet = includeDatasheets ? "bestDatasheet { url } " : string.Empty;
-            string factoryLeadDays = includeLeadTime ? "factoryLeadDays " : string.Empty;
+            string bestDatasheet = excludeDatasheets ? string.Empty : "bestDatasheet { url } ";
+            string factoryLeadDays = excludeLeadTime ? string.Empty : "factoryLeadDays ";
 
-            return "query($queries: [SupPartMatchQuery!]!) {supMultiMatch (queries: $queries) { reference error hits parts { v3uid mpn shortDescription manufacturer { id name homepageUrl } " + datasheet + "octopartUrl sellers { offers { id sku " + factoryLeadDays + "factoryPackQuantity inventoryLevel onOrderQuantity orderMultiple multipackQuantity packaging moq clickUrl updated prices { currency quantity price } } company { id name homepageUrl } isAuthorized } } } }";
+            return "query($queries: [SupPartMatchQuery!]!) {supMultiMatch (queries: $queries) { reference error hits parts { v3uid mpn shortDescription manufacturer { id name homepageUrl } "
+                + bestDatasheet 
+                + "octopartUrl sellers { offers { id sku " 
+                + factoryLeadDays 
+                + "factoryPackQuantity inventoryLevel onOrderQuantity orderMultiple multipackQuantity packaging moq clickUrl updated prices { currency quantity price } } company { id name homepageUrl } isAuthorized } } } }";
         }
 
         private static string GetResponseErrorMessage(IRestResponse res)
@@ -82,7 +86,7 @@ namespace Nexar.Supply.Api
             if (supplyResult?.Errors.Count > 0)
                 return supplyResult.Errors.First().Message;
             
-            return "Server did not return OK (" + res.ErrorMessage + ")";
+            return "Server returned an error (" + res.ErrorMessage + "). Check all arguments to NEXAR_SUPPLY_LOGIN()";
         }
 
         /// <summary>
@@ -109,7 +113,7 @@ namespace Nexar.Supply.Api
         /// <notes>
         /// Server timeout is defaulted to 5000ms
         /// </notes>
-        public static SearchResponse PartsMatch(List<PartsMatchQuery> pnList, string nexarToken, bool includeDatasheets, bool includeLeadTime, int httpTimeout = 5000)
+        public static SearchResponse PartsMatch(List<PartsMatchQuery> pnList, string nexarToken, bool excludeDatasheets, bool excludeLeadTime, int httpTimeout = 5000)
         {
             if ((pnList == null) || (pnList.Count == 0))
                 return null;
@@ -145,7 +149,7 @@ namespace Nexar.Supply.Api
                 //  For this parts match query, we're gunning for something like this...
                 //  https://octopart.com/api/v4/rest/parts/match?apikey=YOUR_API_KEY&include[]=datasheets&queries=[%7B%22mpn%22:%22INA225*%22,%22limit%22:4%7D]&pretty_print=true
 
-                string matchQuery = GetMultiMatchQuery(includeDatasheets, includeLeadTime);
+                string matchQuery = GetMultiMatchQuery(excludeDatasheets, excludeLeadTime);
                 string variables = "\"queries\": " + queryString;
                 string jsonBody = $@"{{ ""query"": ""{matchQuery}"", ""variables"": {{ {variables} }} }}";
 

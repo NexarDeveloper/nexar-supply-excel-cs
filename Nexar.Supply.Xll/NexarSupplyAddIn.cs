@@ -146,7 +146,7 @@ namespace NexarSupplyXll
             if (part != null)
             {
                 // ---- BEGIN Function Specific Information ----
-                return part.GetDatasheetUrl(QueryManager.IncludeDatasheets);
+                return part.GetDatasheetUrl(QueryManager.ExcludeDatasheets);
                 // ---- END Function Specific Information ----
             }
 
@@ -166,7 +166,7 @@ namespace NexarSupplyXll
                     }
 
                     // ---- BEGIN Function Specific Information ----
-                    return part.GetDatasheetUrl(QueryManager.IncludeDatasheets);
+                    return part.GetDatasheetUrl(QueryManager.ExcludeDatasheets);
                     // ---- END Function Specific Information ----
                 }
                 catch (Exception ex)
@@ -777,22 +777,22 @@ namespace NexarSupplyXll
         public static object NEXAR_SUPPLY_LOGIN(
             [ExcelArgument(Description = "Client Id", Name = "Client Id")] string clientId,
             [ExcelArgument(Description = "Client Secret", Name = "Client Secret")] string clientSecret,
-            [ExcelArgument(Description = "Include Datasheets (optional)", Name = "Include Datasheets")] string datasheets = "",
-            [ExcelArgument(Description = "Include Lead Time (optional)", Name = "Include Lead Time")] string leadTime = "")
+            [ExcelArgument(Description = "Exclude Datasheet data (optional)", Name = "Exclude Datasheets")] string datasheets = "",
+            [ExcelArgument(Description = "Exclude Lead Time data (optional)", Name = "Exclude Lead Time")] string leadTime = "")
         {
-            bool includeDatasheets = true;
+            bool excludeDatasheets = false;
             if (!string.IsNullOrEmpty(datasheets))
-                bool.TryParse(datasheets, out includeDatasheets);
+                bool.TryParse(datasheets, out excludeDatasheets);
             
-            bool includeLeadTime = true;
+            bool excludeLeadTime = false;
             if (!string.IsNullOrEmpty(leadTime))
-                bool.TryParse(leadTime, out includeLeadTime);
+                bool.TryParse(leadTime, out excludeLeadTime);
             
             bool changed =
                 QueryManager.NexarClientId != clientId ||
                 QueryManager.NexarClientSecret != clientSecret ||
-                QueryManager.IncludeDatasheets != includeDatasheets ||
-                QueryManager.IncludeLeadTime != includeLeadTime;
+                QueryManager.ExcludeDatasheets != excludeDatasheets ||
+                QueryManager.ExcludeLeadTime != excludeLeadTime;
             
             bool renew = QueryManager.NexarTokenRenewing;
             if (renew)
@@ -802,8 +802,8 @@ namespace NexarSupplyXll
             {
                 QueryManager.NexarClientId = clientId;
                 QueryManager.NexarClientSecret = clientSecret;
-                QueryManager.IncludeDatasheets = includeDatasheets;
-                QueryManager.IncludeLeadTime = includeLeadTime;
+                QueryManager.ExcludeDatasheets = excludeDatasheets;
+                QueryManager.ExcludeLeadTime = excludeLeadTime;
 
                 var t = ExcelAsyncUtil.Run("NEXAR_SUPPLY_LOGIN", new object[] { clientId, clientSecret }, delegate
                 {
@@ -846,7 +846,7 @@ namespace NexarSupplyXll
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Displays the internal features requested", IsHidden = true, IsVolatile = true)]
         public static object NEXAR_SUPPLY_DEV_FEATURES()
         {
-            return "Datasheets: " + (QueryManager.IncludeDatasheets ? "1" : "0") + "; LeadTime: " + (QueryManager.IncludeLeadTime ? "1" : "0");
+            return "ExcludeDatasheets: " + QueryManager.ExcludeDatasheets + "; ExcludeLeadTime: " + QueryManager.ExcludeLeadTime;
         }
 
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Displays the Nexar Supply API version", IsVolatile = true)]
