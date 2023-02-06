@@ -50,5 +50,16 @@ namespace ExtensionMethods
 
             return minprice;
         }
+
+        /// <summary>
+        /// Return an ISO 8601 compliant string in UTC representing the given DateTimeOffset.
+        /// For example: 2023-02-05T14:29:20Z. The formatted string is also RFC3339 compliant.
+        /// </summary>
+        /// <param name="dateTimeOffset">The input DateTimeOffset</param>
+        /// <returns>An ISO 8601 compliant string representation in UTC of the input DateTimeOffset</returns>
+        public static string ToUtcIso8601String(this DateTimeOffset dateTimeOffset)
+        {
+            return dateTimeOffset.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ssZ", DateTimeFormatInfo.InvariantInfo);
+        }
     }
 }

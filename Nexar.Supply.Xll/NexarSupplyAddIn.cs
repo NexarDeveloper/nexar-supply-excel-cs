@@ -436,6 +436,61 @@ namespace NexarSupplyXll
             return asyncResult;
         }
 
+        [ExcelFunction(Category = "Nexar Supply Queries", Description = "Gets the distributor stock updated time (ISO 8601 compliant in UTC) from Nexar Supply", HelpTopic = "NexarSupplyAddIn.chm!1005")]
+        public static object NEXAR_SUPPLY_DISTRIBUTOR_STOCK_UPDATED(
+            [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
+            [ExcelArgument(Description = "Manufacturer of the part to query (optional)", Name = "Manufacturer")] string manuf = "",
+            [ExcelArgument(Description = "Distributors for lookup (optional)", Name = "Distributor(s)")] Object[] distributors = null,
+            [ExcelArgument(Description = "Only authorized sellers (optional, default = Any)", Name = "Authorized")] string authorized = "Any")
+        {
+            AuthorizedSeller auth = (AuthorizedSeller)Parse(authorized);
+            List<Offer> offers = GetOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
+            if (offers != null && offers.Count > 0)
+            {
+                // ---- BEGIN Function Specific Information ----
+                return GetOffersStockUpdated(offers);
+                // ---- END Function Specific Information ----
+            }
+
+            mpn_or_sku = mpn_or_sku.PadRight(mpn_or_sku.Length + _refreshhack.Length);
+            object asyncResult = ExcelAsyncUtil.Run("NEXAR_SUPPLY_DISTRIBUTOR_STOCK_UPDATED", new object[] { mpn_or_sku, manuf, distributors }, delegate
+            {
+                try
+                {
+                    offers = SearchAndWaitOffers(mpn_or_sku, manuf, auth, GetDistributors(distributors));
+                    if ((offers == null) || (offers.Count == 0))
+                    {
+                        string err = QueryManager.GetLastError(mpn_or_sku);
+                        if (string.IsNullOrEmpty(err))
+                            err = "Query did not provide a result. Please widen your search criteria.";
+
+                        return "ERROR: " + err;
+                    }
+
+                    // ---- BEGIN Function Specific Information ----
+                    return GetOffersStockUpdated(offers);
+                    // ---- END Function Specific Information ----
+                }
+                catch (Exception ex)
+                {
+                    log.Fatal(ex.ToString());
+                    return "ERROR: " + NexarQueryManager.FATAL_ERROR;
+                }
+            });
+
+            if (asyncResult.Equals(ExcelError.ExcelErrorNA))
+            {
+                return NexarQueryManager.PROCESSING;
+            }
+            else if (!string.IsNullOrEmpty(QueryManager.GetLastError(mpn_or_sku)) || (offers == null))
+            {
+                _refreshhack = string.Empty.PadRight(new Random().Next(0, 100));
+            }
+
+            return asyncResult;
+        }
+
+
         [ExcelFunction(Category = "Nexar Supply Queries", Description = "Gets the distributor MOQ from Nexar Supply", HelpTopic = "NexarSupplyAddIn.chm!1006")]
         public static object NEXAR_SUPPLY_DISTRIBUTOR_MOQ(
             [ExcelArgument(Description = "Part Number Lookup", Name = "MPN or SKU")] string mpn_or_sku,
@@ -1069,6 +1124,18 @@ namespace NexarSupplyXll
                 default:
                     return stock;
             }
+        }
+
+        private static object GetOffersStockUpdated(List<Offer> offers)
+        {
+            Offer maxInventoryOffer = offers
+                .OrderByDescending(offer => offer.InventoryLevel)
+                .FirstOrDefault();
+
+            if (maxInventoryOffer.Updated == DateTimeOffset.MinValue)
+                return "";
+
+            return ExtensionMethods.Extensions.ToUtcIso8601String(maxInventoryOffer.Updated);
         }
 
         private static List<Seller> FilterSellers(AuthorizedSeller auth, string distributor, List<Seller> sellers)
