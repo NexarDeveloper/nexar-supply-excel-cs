@@ -93,6 +93,8 @@ From here on, the world is your oyster:
 
 For results that come in a URL format (e.g., for `=NEXAR_SUPPLY_DATASHEET_URL`, `=NEXAR_SUPPLY_DETAIL_URL` or `=NEXAR_SUPPLY_DISTRIBUTOR_URL`, click the "Update Hyperlinks" button to activate the links.
 
+- Top Tip: Some functions allow you to specify the distributor(s).  Here you can either enter a string for a partial match on the name or you cna specify the Seller Id from the [list](https://octopart.com/api/v4/values#sellers) for an exact match.
+
 ## Sample Spreadsheet
 A sample spreadsheet, including examples of functions as well as a small (and unrealistic) Bill-of-Materials (BOM), is provided. 
 * [Sample Excel](samples/NexarSupplytAddInExample.xlsm)
