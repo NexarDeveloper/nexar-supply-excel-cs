@@ -1138,10 +1138,23 @@ namespace NexarSupplyXll
             return ExtensionMethods.Extensions.ToUtcIso8601String(maxInventoryOffer.Updated);
         }
 
-        private static List<Seller> FilterSellers(AuthorizedSeller auth, string distributor, List<Seller> sellers)
+        private static List<Seller> FilterSellers(AuthorizedSeller auth, string sellerIdOrName, List<Seller> sellers)
         {
-            List<Seller> filteredSellers = sellers.Where(seller => string.IsNullOrEmpty(distributor) || seller.Company.Name.Sanitize().Contains(distributor.Sanitize())).ToList();
-            List<Seller> allowedSellers = filteredSellers.Where(seller =>
+            List<Seller> filteredSellers = FilterSellersByIdOrName(sellerIdOrName, sellers);
+            List<Seller> allowedSellers = FilterSellersByAuth(auth, filteredSellers);
+            return allowedSellers;
+        }
+
+        private static List<Seller> FilterSellers(AuthorizedSeller auth, List<string> sellerIdsOrNames, List<Seller> sellers)
+        {
+            List<Seller> filteredSellers = FilterSellersByIdsOrNames(sellerIdsOrNames, sellers);
+            List<Seller> allowedSellers = FilterSellersByAuth(auth, filteredSellers);
+            return allowedSellers;
+        }
+
+        private static List<Seller> FilterSellersByAuth(AuthorizedSeller auth, List<Seller> filteredSellers)
+        {
+            return filteredSellers.Where(seller =>
             {
                 switch (auth)
                 {
@@ -1153,17 +1166,43 @@ namespace NexarSupplyXll
                         return true;
                 }
             }).ToList();
-            return allowedSellers;
+        }
+
+        private static List<Seller> FilterSellersByIdOrName(string sellerIdOrName, List<Seller> sellers)
+        {
+            return sellers.Where(seller =>
+            {
+                if (string.IsNullOrEmpty(sellerIdOrName))
+                    return true;
+                if (int.TryParse(sellerIdOrName.Sanitize(), out int distributorId))
+                    return seller.Company.Id.Equals(distributorId);
+                else
+                    return seller.Company.Name.Sanitize().Contains(sellerIdOrName.Sanitize());
+            }).ToList();
+        }
+
+        private static List<Seller> FilterSellersByIdsOrNames(List<string> sellerIdsOrNames, List<Seller> sellers)
+        {
+            return sellers.Where(seller =>
+            {
+                if (sellerIdsOrNames is null || sellerIdsOrNames.Count == 0)
+                    return true;
+
+                return sellerIdsOrNames.Any(sellerIdOrName =>
+                {
+                    if (int.TryParse(sellerIdOrName.Sanitize(), out int sellerId))
+                        return seller.Company.Id.Equals(sellerId);
+                    else
+                        return seller.Company.Name.Sanitize().Contains(sellerIdOrName.Sanitize());
+                });
+            }).ToList();
         }
 
         private static List<Offer> GetOffers(string mpnOrSku, string manuf, AuthorizedSeller auth, List<string> distributors)
         {
             List<Part> parts = QueryManager.GetParts(mpnOrSku);
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> allowedSellers = sellers.Where(
-                seller => distributors == null || distributors.Count == 0 || distributors.Any(d => seller.Company.Name.Sanitize().Contains(d.Sanitize()))
-            ).ToList();
-            List<Seller> filteredSellers = FilterSellers(auth, string.Empty, allowedSellers);
+            List<Seller> filteredSellers = FilterSellers(auth, distributors, sellers);
             List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers;
         }
@@ -1179,10 +1218,7 @@ namespace NexarSupplyXll
         private static List<Offer> GetAllOffers(List<Part> parts, AuthorizedSeller auth, List<string> distributors)
         {
             List<Seller> sellers = parts.SelectMany(offer => offer.Sellers).ToList();
-            List<Seller> allowedSellers = sellers.Where(
-                seller => distributors == null || distributors.Count == 0 || distributors.Any(d => seller.Company.Name.Sanitize().Contains(d.Sanitize()))
-            ).ToList();
-            List<Seller> filteredSellers = FilterSellers(auth, string.Empty, allowedSellers);
+            List<Seller> filteredSellers = FilterSellers(auth, distributors, sellers);
             List<Offer> offers = filteredSellers.SelectMany(seller => seller.Offers).ToList();
             return offers;
         }
