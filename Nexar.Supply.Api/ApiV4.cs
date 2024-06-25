@@ -44,7 +44,7 @@ namespace Nexar.Supply.Api
         /// Note: Returning 20 results in up to 20 MPNs. In testing, this means data unrelated to the intended part is being pulled. Commenting out and setting to 1 pending future side effects.
         /// </summary>
         /// public const int RECORD_LIMIT_PER_QUERY = 20;
-	    public const int RECORD_LIMIT_PER_QUERY = 1;
+        public const int RECORD_LIMIT_PER_QUERY = 1;
 
         /// <summary>
         /// The start limit for a Nexar Supply API request (guided by the underlying Octopart service)
@@ -53,7 +53,7 @@ namespace Nexar.Supply.Api
 
         private const string NEXAR_BASE_URL = "https://api.nexar.com";
         private const string NEXAR_GRAPHQL = "/graphql";
-        private const string NEXAR_VERSION = "0.5.2";
+        private const string NEXAR_VERSION = "0.6.0";
 
         #endregion
 
