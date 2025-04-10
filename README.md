@@ -97,9 +97,9 @@ For results that come in a URL format (e.g., for `=NEXAR_SUPPLY_DATASHEET_URL`, 
 - Top Tip: Some functions allow you to specify the distributor(s).  Here you can either enter a string for a partial match on the name or you cna specify the Seller Id from the [list](https://octopart.com/api/v4/values#sellers) for an exact match.
 
 ## Sample Spreadsheet
-A sample spreadsheet, including examples of functions as well as a small (and unrealistic) Bill-of-Materials (BOM), is provided. 
+Sample spreadsheets, including examples of functions, a small (and unrealistic) Bill-of-Materials (BOM), and a competitive price comparison is provided. Please note that you may need to speak with your account manager to see competitive price breakdowns.
 * [Sample Excel](samples/NexarSupplytAddInExample.xlsm)
-
+* [Sample Excel - competitive price comaprison](samples/competitive_price_comparison.xlsm)
 
 # Building the Excel Add-in (Windows):
 
