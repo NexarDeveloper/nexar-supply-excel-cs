@@ -912,7 +912,7 @@ namespace NexarSupplyXll
                 QueryManager.ExcludeDatasheets = excludeDatasheets;
                 QueryManager.ExcludeLeadTime = excludeLeadTime;
 
-                var t = ExcelAsyncUtil.Run("NEXAR_SUPPLY_LOGIN", new object[] { clientId, clientSecret }, delegate
+                object asyncResult = ExcelAsyncUtil.Run("NEXAR_SUPPLY_LOGIN", new object[] { clientId, clientSecret, datasheets, leadTime }, delegate
                 {
                     QueryManager.NexarToken = GetNexarTokenAsync().Result;
                     if (string.IsNullOrEmpty(QueryManager.NexarToken))
@@ -926,6 +926,15 @@ namespace NexarSupplyXll
                         return "The Nexar Supply Add-in is ready!";
                     }
                 });
+
+                if (asyncResult.Equals(ExcelError.ExcelErrorNA))
+                {
+                    // Still processing...
+                    return "Logging in...";
+                }
+
+                // Done processing!
+                return asyncResult;
             }
 
             if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
