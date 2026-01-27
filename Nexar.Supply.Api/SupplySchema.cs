@@ -109,8 +109,7 @@ namespace Nexar.Supply.SupplySchema
     public partial class Offer
     {
         [JsonProperty("id")]
-        [JsonConverter(typeof(ParseStringConverter))]
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty("sku")]
         public string Sku { get; set; }
